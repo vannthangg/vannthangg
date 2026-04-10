@@ -1,0 +1,388 @@
+const express = require('express');
+const cors = require('cors');
+const http = require('http');
+const { Server } = require('socket.io');
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcrypt');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config();
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'] }
+});
+
+const prisma = new PrismaClient();
+
+app.use(cors());
+app.use(express.json());
+
+// === CẤU HÌNH LƯU TRỮ ẢNH (MULTER) ===
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+});
+const upload = multer({ storage });
+
+// Cho phép xem ảnh qua link: http://localhost:3000/uploads/ten-file.jpg
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+// === API AUTH ===
+// Đăng nhập
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username và password bắt buộc' });
+    }
+
+    const user = await prisma.user.findUnique({ where: { username } });
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Sai tên đăng nhập hoặc mật khẩu' });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Sai tên đăng nhập hoặc mật khẩu' });
+    }
+
+    res.json({ 
+      user: { 
+        id: user.id, 
+        username: user.username, 
+        name: user.name, 
+        role: user.role 
+      } 
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === API CHO KHÁCH HÀNG ===
+
+// Lấy QR code của bàn
+app.get('/api/table/:id/qr', async (req, res) => {
+  try {
+    const tableId = parseInt(req.params.id);
+    const table = await prisma.table.findUnique({ where: { id: tableId } });
+    
+    if (!table) {
+      return res.status(404).json({ error: 'Bàn không tồn tại' });
+    }
+    
+    res.json({ 
+      id: table.id,
+      name: table.name,
+      qrCode: table.qrCode || `http://localhost:3000/table/${tableId}`
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Lấy Menu theo Bàn (dùng cho trang TableMenu)
+app.get('/api/table/:id/menu', async (req, res) => {
+  try {
+    const tableId = parseInt(req.params.id);
+    const table = await prisma.table.findUnique({ where: { id: tableId } });
+    const categories = await prisma.category.findMany({
+      include: { items: true },
+      orderBy: { sort: 'asc' }
+    });
+    res.json({ table, categories });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// API Đặt món
+app.post('/api/order', async (req, res) => {
+  try {
+    const { tableId, items } = req.body;
+    const menuItems = await prisma.menuItem.findMany({
+      where: { id: { in: items.map(i => i.menuItemId) } }
+    });
+
+    const total = items.reduce((sum, item) => {
+      const menu = menuItems.find(m => m.id === item.menuItemId);
+      return sum + (menu.price * item.quantity);
+    }, 0);
+
+    const order = await prisma.order.create({
+      data: {
+        tableId,
+        status: 'Pending',
+        total,
+        items: { create: items.map(i => ({ menuItemId: i.menuItemId, quantity: i.quantity })) }
+      },
+      include: { items: { include: { menuItem: true } }, table: true }
+    });
+
+    // Thông báo cho Bếp qua Socket.io
+    io.emit('new-order', order);
+    res.status(201).json(order);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+// === API CHO ADMIN ===
+
+// 1. Lấy danh sách menu items
+app.get('/api/admin/menu', async (req, res) => {
+  try {
+    const items = await prisma.menuItem.findMany({
+      include: { category: true },
+      orderBy: { categoryId: 'asc' }
+    });
+    res.json(items);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// === UPLOAD ẢNH ===
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Không có file được tải lên' });
+    }
+    const fileUrl = `http://localhost:3000/uploads/${req.file.filename}`;
+    res.json({ url: fileUrl, message: 'Tải ảnh thành công' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 2. Tạo món ăn mới
+app.post('/api/admin/menu', upload.single('image'), async (req, res) => {
+  try {
+    const { name, price, categoryId, description, image } = req.body;
+    
+    const imageUrl = req.file 
+      ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
+      : image; // Nếu không up file thì dùng URL từ request body
+
+    const menuItem = await prisma.menuItem.create({
+      data: {
+        name,
+        price: Number(price),
+        image: imageUrl,
+        description,
+        categoryId: Number(categoryId),
+        isAvailable: true
+      },
+      include: { category: true }
+    });
+    res.status(201).json(menuItem);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 3. Cập nhật món ăn
+app.put('/api/admin/menu/:id', upload.single('image'), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, price, categoryId, description, image } = req.body;
+
+    const imageUrl = req.file 
+      ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
+      : image;
+
+    const menuItem = await prisma.menuItem.update({
+      where: { id: Number(id) },
+      data: {
+        name,
+        price: Number(price),
+        image: imageUrl,
+        description,
+        categoryId: Number(categoryId)
+      },
+      include: { category: true }
+    });
+    res.json(menuItem);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 4. Xóa món ăn
+app.delete('/api/admin/menu/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.menuItem.delete({ where: { id: Number(id) } });
+    res.json({ message: 'Xóa thành công' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// === API BẾP CẬP NHẬT TRẠNG THÁI HÀNG ===
+app.put('/api/menu/:id/availability', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isAvailable } = req.body;
+
+    const menuItem = await prisma.menuItem.update({
+      where: { id: Number(id) },
+      data: { isAvailable: Boolean(isAvailable) }
+    });
+
+    console.log(`📦 Cập nhật món: ${menuItem.name} - ${isAvailable ? '✅ Còn hàng' : '❌ Hết hàng'}`);
+    
+    res.json({ 
+      success: true, 
+      message: `${menuItem.name} ${isAvailable ? '✅ Còn hàng' : '❌ Hết hàng'}`,
+      menuItem 
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 5. Lấy danh sách danh mục
+app.get('/api/admin/categories', async (req, res) => {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: { sort: 'asc' }
+    });
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 6. Lấy danh sách nhân viên
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: { id: true, username: true, name: true, role: true, createdAt: true }
+    });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 7. Tạo nhân viên mới
+app.post('/api/admin/users', async (req, res) => {
+  try {
+    const { username, password, name, role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await prisma.user.create({
+      data: { username, password: hashedPassword, name, role }
+    });
+    res.status(201).json({ id: user.id, username: user.username, name: user.name, role: user.role, createdAt: user.createdAt });
+  } catch (err) {
+    res.status(500).json({ error: 'Tên đăng nhập đã tồn tại hoặc lỗi server' });
+  }
+});
+
+// 8. Cập nhật nhân viên
+app.put('/api/admin/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, name, role, password } = req.body;
+    
+    const updateData = { username, name, role };
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+    
+    const user = await prisma.user.update({
+      where: { id: Number(id) },
+      data: updateData,
+      select: { id: true, username: true, name: true, role: true, createdAt: true }
+    });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Không thể cập nhật nhân viên' });
+  }
+});
+
+// 9. Xóa nhân viên
+app.delete('/api/admin/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.user.delete({ where: { id: Number(id) } });
+    res.json({ message: 'Xóa nhân viên thành công' });
+  } catch (err) {
+    res.status(500).json({ error: 'Không thể xóa nhân viên' });
+  }
+});
+
+// 4. Doanh thu hôm nay
+app.get('/api/admin/revenue/daily', async (req, res) => {
+  try {
+    const startOfToday = new Date();
+    startOfToday.setHours(0,0,0,0);
+    
+    const paidOrders = await prisma.order.findMany({
+      where: { 
+        status: { equals: 'Paid', mode: 'insensitive' },
+        createdAt: { gte: startOfToday }
+      }
+    });
+    const totalRevenue = paidOrders.reduce((sum, order) => sum + order.total, 0);
+    res.json({ totalRevenue });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 5. Thống kê 7 ngày
+app.get('/api/admin/revenue/summary', async (req, res) => {
+  try {
+    const summary = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      d.setHours(0,0,0,0);
+      const nextD = new Date(d);
+      nextD.setDate(d.getDate() + 1);
+
+      const dayOrders = await prisma.order.findMany({
+        where: { status: 'Paid', createdAt: { gte: d, lt: nextD } }
+      });
+      summary.push({
+        date: d.toISOString().slice(0, 10),
+        totalRevenue: dayOrders.reduce((sum, o) => sum + o.total, 0)
+      });
+    }
+    res.json(summary);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 6. Lấy danh sách bàn
+app.get('/api/admin/tables', async (req, res) => {
+  const tables = await prisma.table.findMany();
+  res.json(tables);
+});
+
+// === SOCKET.IO ===
+io.on('connection', (socket) => {
+  console.log('Client connected:', socket.id);
+  socket.on('disconnect', () => console.log('Client disconnected'));
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🚀 Backend chạy tại http://localhost:${PORT}`);
+});

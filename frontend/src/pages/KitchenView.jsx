@@ -1,0 +1,423 @@
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const styles = {
+  page: {
+    minHeight: '100vh',
+    background: 'radial-gradient(circle at top, #0f172a 0%, #020617 55%, #020617 100%)',
+    color: '#e2e8f0',
+    padding: '24px',
+    fontFamily: 'Inter, system-ui, sans-serif'
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    flexWrap: 'wrap',
+    gap: '18px',
+    marginBottom: '28px'
+  },
+  heading: {
+    margin: 0,
+    fontSize: 'clamp(2rem, 2.5vw, 2.5rem)',
+    lineHeight: 1.1
+  },
+  subtitle: {
+    margin: 0,
+    color: '#94a3b8',
+    maxWidth: '720px'
+  },
+  grid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '20px'
+  },
+  card: {
+    background: 'rgba(15, 23, 42, 0.95)',
+    border: '1px solid rgba(148, 163, 184, 0.18)',
+    borderRadius: '24px',
+    boxShadow: '0 20px 60px rgba(15, 23, 42, 0.45)',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '260px'
+  },
+  cardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    padding: '22px',
+    borderBottom: '1px solid rgba(148, 163, 184, 0.08)'
+  },
+  tableBadge: {
+    background: '#2563eb',
+    color: '#fff',
+    borderRadius: '999px',
+    padding: '8px 14px',
+    fontWeight: 700,
+    fontSize: '0.95rem'
+  },
+  statusTag: {
+    color: '#f8fafc',
+    background: 'rgba(59, 130, 246, 0.12)',
+    borderRadius: '999px',
+    padding: '8px 12px',
+    fontSize: '0.82rem',
+    letterSpacing: '0.02em'
+  },
+  body: {
+    padding: '18px 22px 22px'
+  },
+  time: {
+    color: '#94a3b8',
+    fontSize: '0.94rem',
+    marginTop: '8px'
+  },
+  items: {
+    listStyle: 'none',
+    margin: '16px 0 0',
+    padding: 0,
+    display: 'grid',
+    gap: '12px'
+  },
+  itemRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '12px',
+    padding: '14px 16px',
+    background: 'rgba(30, 41, 59, 0.85)',
+    borderRadius: '18px'
+  },
+  itemName: {
+    margin: 0,
+    fontWeight: 600,
+    color: '#f8fafc'
+  },
+  itemQty: {
+    margin: 0,
+    color: '#93c5fd',
+    fontWeight: 700
+  },
+  button: {
+    marginTop: 'auto',
+    width: '100%',
+    border: 'none',
+    borderTop: '1px solid rgba(148, 163, 184, 0.1)',
+    padding: '18px',
+    cursor: 'pointer',
+    background: 'linear-gradient(90deg, #2563eb, #4f46e5)',
+    color: '#fff',
+    fontWeight: 700,
+    fontSize: '1rem',
+    transition: 'transform 0.18s ease, opacity 0.18s ease'
+  },
+  footer: {
+    marginTop: '24px',
+    textAlign: 'center',
+    color: '#94a3b8'
+  }
+};
+
+const formatTimeSince = (createdAt) => {
+  const created = new Date(createdAt);
+  const diffMs = Date.now() - created.getTime();
+  const minutes = Math.floor(diffMs / 60000);
+  if (minutes < 1) return 'Vừa xong';
+  if (minutes < 60) return `${minutes} phút trước`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours} giờ trước`;
+  const days = Math.floor(hours / 24);
+  return `${days} ngày trước`;
+};
+
+export default function KitchenView({ onLogout }) {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [actionLoading, setActionLoading] = useState(null);
+  const [activeTab, setActiveTab] = useState('orders'); // 'orders' hoặc 'inventory'
+  const [menuItems, setMenuItems] = useState([]);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    onLogout?.();
+    navigate('/login');
+  };
+
+  const loadOrders = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/admin/orders/pending');
+      setOrders(response.data || []);
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError('Không thể tải đơn. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMenuItems = async () => {
+    try {
+      setInventoryLoading(true);
+      const response = await axios.get('http://localhost:3000/api/admin/menu');
+      setMenuItems(response.data || []);
+    } catch (err) {
+      console.error('Lỗi tải menu:', err);
+      setError('Không thể tải danh sách món.');
+    } finally {
+      setInventoryLoading(false);
+    }
+  };
+
+  const handleToggleAvailability = async (itemId, currentStatus) => {
+    try {
+      setActionLoading(itemId);
+      const newStatus = !currentStatus;
+      const response = await axios.put(`http://localhost:3000/api/menu/${itemId}/availability`, {
+        isAvailable: newStatus
+      });
+      
+      setMenuItems((prev) =>
+        prev.map((item) =>
+          item.id === itemId ? { ...item, isAvailable: newStatus } : item
+        )
+      );
+      
+      console.log(response.data.message);
+    } catch (err) {
+      console.error('Lỗi cập nhật:', err);
+      setError('Cập nhật trạng thái thất bại.');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  useEffect(() => {
+    loadOrders();
+    const interval = setInterval(loadOrders, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'inventory') {
+      loadMenuItems();
+    }
+  }, [activeTab]);
+
+  const handleMarkDone = async (orderId) => {
+    try {
+      setActionLoading(orderId);
+      await axios.patch(`http://localhost:3000/api/admin/order/${orderId}/status`, { status: 'Served' });
+      setOrders((current) => current.filter((order) => order.id !== orderId));
+    } catch (err) {
+      console.error(err);
+      setError('Cập nhật trạng thái thất bại.');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  return (
+    <div style={styles.page}>
+      <header style={styles.header}>
+        <div>
+          <h1 style={styles.heading}>Bếp – KDS</h1>
+          <p style={styles.subtitle}>Xem đơn đang chờ xử lý. Màn hình được làm tối, rõ ràng và dễ đọc trong môi trường bếp.</p>
+        </div>
+        <div style={{ display: 'grid', gap: '10px', textAlign: 'right' }}>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: '10px 16px',
+              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '0.95rem',
+              fontWeight: '600',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            Đăng xuất
+          </button>
+          <div style={{ color: '#94a3b8' }}>Cập nhật tự động mỗi 5 giây</div>
+          <div style={{ background: 'rgba(59, 130, 246, 0.15)', padding: '10px 14px', borderRadius: '999px', color: '#bfdbfe', fontWeight: 700 }}>Đơn đang chờ: {orders.length}</div>
+        </div>
+      </header>
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', borderBottom: '1px solid rgba(148, 163, 184, 0.1)', paddingBottom: '12px' }}>
+        <button
+          onClick={() => setActiveTab('orders')}
+          style={{
+            padding: '10px 18px',
+            border: 'none',
+            background: activeTab === 'orders' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+            color: activeTab === 'orders' ? '#60a5fa' : '#94a3b8',
+            borderBottom: activeTab === 'orders' ? '2px solid #3b82f6' : 'none',
+            cursor: 'pointer',
+            fontWeight: 700,
+            transition: 'all 0.3s ease'
+          }}
+        >
+          Đơn hàng ({orders.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('inventory')}
+          style={{
+            padding: '10px 18px',
+            border: 'none',
+            background: activeTab === 'inventory' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
+            color: activeTab === 'inventory' ? '#60a5fa' : '#94a3b8',
+            borderBottom: activeTab === 'inventory' ? '2px solid #3b82f6' : 'none',
+            cursor: 'pointer',
+            fontWeight: 700,
+            transition: 'all 0.3s ease'
+          }}
+        >
+          Quản lý hàng
+        </button>
+      </div>
+
+      {/* Tab: Đơn hàng */}
+      {activeTab === 'orders' && (
+        <>
+          {loading ? (
+            <div style={{ color: '#94a3b8', textAlign: 'center', marginTop: '100px' }}>Đang tải đơn...</div>
+          ) : (
+            <div style={styles.grid}>
+              {orders.length === 0 ? (
+                <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#94a3b8', padding: '60px 14px', border: '1px solid rgba(148, 163, 184, 0.1)', borderRadius: '24px' }}>
+                  Hiện tại không có đơn chờ.
+                </div>
+              ) : (
+                orders.map((order) => (
+                  <article key={order.id} style={styles.card}>
+                    <div style={styles.cardHeader}>
+                      <div>
+                        <div style={{ fontSize: '0.98rem', color: '#94a3b8' }}>Bàn {order.table?.name || order.tableId}</div>
+                        <div style={{ fontSize: '1.35rem', fontWeight: 700, marginTop: '6px' }}>#{order.id}</div>
+                      </div>
+                      <div style={styles.tableBadge}>{formatTimeSince(order.createdAt)}</div>
+                    </div>
+
+                    <div style={styles.body}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px' }}>
+                        <span style={styles.statusTag}>{order.status?.toUpperCase() || 'PENDING'}</span>
+                        <span style={styles.time}>{new Date(order.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+
+                      <ul style={styles.items}>
+                        {order.items.map((item) => (
+                          <li key={item.id} style={styles.itemRow}>
+                            <p style={styles.itemName}>{item.menuItem?.name || 'Món không xác định'}</p>
+                            <p style={styles.itemQty}>x{item.quantity}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <button
+                      type="button"
+                      style={styles.button}
+                      onClick={() => handleMarkDone(order.id)}
+                      disabled={actionLoading === order.id}
+                    >
+                      {actionLoading === order.id ? 'Đang cập nhật...' : 'Đã phục vụ'}
+                    </button>
+                  </article>
+                ))
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Tab: Quản lý hàng */}
+      {activeTab === 'inventory' && (
+        <>
+          {inventoryLoading ? (
+            <div style={{ color: '#94a3b8', textAlign: 'center', marginTop: '100px' }}>Đang tải danh sách món...</div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+              {menuItems.length === 0 ? (
+                <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#94a3b8', padding: '40px' }}>
+                  Không có món nào.
+                </div>
+              ) : (
+                menuItems.map((item) => (
+                  <div
+                    key={item.id}
+                    style={{
+                      background: item.isAvailable ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
+                      border: item.isAvailable ? '1.5px solid rgba(16, 185, 129, 0.3)' : '1.5px solid rgba(239, 68, 68, 0.3)',
+                      borderRadius: '16px',
+                      padding: '18px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: '16px',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.1rem', fontWeight: 700 }}>
+                        {item.name}
+                      </h3>
+                      <p style={{ margin: '6px 0 0', color: '#94a3b8', fontSize: '0.9rem' }}>
+                        {item.category?.name || 'Không xác định'}
+                      </p>
+                      <p style={{ margin: '4px 0 0', color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}>
+                        {(item.price || 0).toLocaleString('vi-VN')} đ
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggleAvailability(item.id, item.isAvailable)}
+                      disabled={actionLoading === item.id}
+                      style={{
+                        padding: '12px 20px',
+                        border: 'none',
+                        borderRadius: '12px',
+                        background: item.isAvailable ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                        color: item.isAvailable ? '#6ee7b7' : '#fca5a5',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        minWidth: '120px'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.background = item.isAvailable ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.background = item.isAvailable ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+                      }}
+                    >
+                      {actionLoading === item.id ? (
+                        'Đang...'
+                      ) : item.isAvailable ? (
+                        'Còn hàng'
+                      ) : (
+                        'Hết hàng'
+                      )}
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </>
+      )}
+
+      {error && <div style={styles.footer}>{error}</div>}
+    </div>
+  );
+}
