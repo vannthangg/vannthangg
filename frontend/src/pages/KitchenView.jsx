@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useTheme } from '../ThemeContext';
 
 const styles = {
   page: {
@@ -132,6 +133,19 @@ const formatTimeSince = (createdAt) => {
 };
 
 export default function KitchenView({ onLogout }) {
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const pageBg = isDark
+    ? 'radial-gradient(circle at top, #0f172a 0%, #020617 55%, #020617 100%)'
+    : 'linear-gradient(135deg, #f0f4ff 0%, #e8edf8 100%)';
+  const textMain = isDark ? '#e2e8f0' : '#0f172a';
+  const textMuted = isDark ? '#94a3b8' : '#64748b';
+  const cardBg = isDark ? 'rgba(15, 23, 42, 0.95)' : '#ffffff';
+  const cardBorder = isDark ? 'rgba(148, 163, 184, 0.18)' : '#e2e8f0';
+  const itemRowBg = isDark ? 'rgba(30, 41, 59, 0.85)' : '#f1f5f9';
+  const tabBorderColor = isDark ? 'rgba(148, 163, 184, 0.1)' : '#e2e8f0';
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -180,13 +194,13 @@ export default function KitchenView({ onLogout }) {
       const response = await axios.put(`http://localhost:3000/api/menu/${itemId}/availability`, {
         isAvailable: newStatus
       });
-      
+
       setMenuItems((prev) =>
         prev.map((item) =>
           item.id === itemId ? { ...item, isAvailable: newStatus } : item
         )
       );
-      
+
       console.log(response.data.message);
     } catch (err) {
       console.error('Lỗi cập nhật:', err);
@@ -222,45 +236,50 @@ export default function KitchenView({ onLogout }) {
   };
 
   return (
-    <div style={styles.page}>
+    <div style={{ ...styles.page, background: pageBg, color: textMain }}>
       <header style={styles.header}>
         <div>
           <h1 style={styles.heading}>Bếp – KDS</h1>
-          <p style={styles.subtitle}>Xem đơn đang chờ xử lý. Màn hình được làm tối, rõ ràng và dễ đọc trong môi trường bếp.</p>
+          <p style={{ ...styles.subtitle, color: textMuted }}>Xem đơn đang chờ xử lý. Màn hình được làm tối, rõ ràng và dễ đọc trong môi trường bếp.</p>
         </div>
         <div style={{ display: 'grid', gap: '10px', textAlign: 'right' }}>
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: '10px 16px',
-              background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '0.95rem',
-              fontWeight: '600',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
-            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
-          >
-            Đăng xuất
-          </button>
-          <div style={{ color: '#94a3b8' }}>Cập nhật tự động mỗi 5 giây</div>
+          <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+            <button onClick={toggleTheme} className="theme-toggle-btn">
+              {isDark ? '☀️ Light' : '🌙 Dark'}
+            </button>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: '10px 16px',
+                background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '0.95rem',
+                fontWeight: '600',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              Đăng xuất
+            </button>
+          </div>
+          <div style={{ color: textMuted }}>Cập nhật tự động mỗi 5 giây</div>
           <div style={{ background: 'rgba(59, 130, 246, 0.15)', padding: '10px 14px', borderRadius: '999px', color: '#bfdbfe', fontWeight: 700 }}>Đơn đang chờ: {orders.length}</div>
         </div>
       </header>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', borderBottom: '1px solid rgba(148, 163, 184, 0.1)', paddingBottom: '12px' }}>
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', borderBottom: `1px solid ${tabBorderColor}`, paddingBottom: '12px' }}>
         <button
           onClick={() => setActiveTab('orders')}
           style={{
             padding: '10px 18px',
             border: 'none',
             background: activeTab === 'orders' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-            color: activeTab === 'orders' ? '#60a5fa' : '#94a3b8',
+            color: activeTab === 'orders' ? '#60a5fa' : textMuted,
             borderBottom: activeTab === 'orders' ? '2px solid #3b82f6' : 'none',
             cursor: 'pointer',
             fontWeight: 700,
@@ -275,7 +294,7 @@ export default function KitchenView({ onLogout }) {
             padding: '10px 18px',
             border: 'none',
             background: activeTab === 'inventory' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-            color: activeTab === 'inventory' ? '#60a5fa' : '#94a3b8',
+            color: activeTab === 'inventory' ? '#60a5fa' : textMuted,
             borderBottom: activeTab === 'inventory' ? '2px solid #3b82f6' : 'none',
             cursor: 'pointer',
             fontWeight: 700,
@@ -294,12 +313,12 @@ export default function KitchenView({ onLogout }) {
           ) : (
             <div style={styles.grid}>
               {orders.length === 0 ? (
-                <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#94a3b8', padding: '60px 14px', border: '1px solid rgba(148, 163, 184, 0.1)', borderRadius: '24px' }}>
+                <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: textMuted, padding: '60px 14px', border: `1px solid ${cardBorder}`, borderRadius: '24px' }}>
                   Hiện tại không có đơn chờ.
                 </div>
               ) : (
                 orders.map((order) => (
-                  <article key={order.id} style={styles.card}>
+                  <article key={order.id} style={{ ...styles.card, background: cardBg, border: `1px solid ${cardBorder}` }}>
                     <div style={styles.cardHeader}>
                       <div>
                         <div style={{ fontSize: '0.98rem', color: '#94a3b8' }}>Bàn {order.table?.name || order.tableId}</div>
@@ -316,8 +335,8 @@ export default function KitchenView({ onLogout }) {
 
                       <ul style={styles.items}>
                         {order.items.map((item) => (
-                          <li key={item.id} style={styles.itemRow}>
-                            <p style={styles.itemName}>{item.menuItem?.name || 'Món không xác định'}</p>
+                          <li key={item.id} style={{ ...styles.itemRow, background: itemRowBg }}>
+                            <p style={{ ...styles.itemName, color: textMain }}>{item.menuItem?.name || 'Món không xác định'}</p>
                             <p style={styles.itemQty}>x{item.quantity}</p>
                           </li>
                         ))}
@@ -368,13 +387,13 @@ export default function KitchenView({ onLogout }) {
                     }}
                   >
                     <div style={{ flex: 1 }}>
-                      <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.1rem', fontWeight: 700 }}>
+                      <h3 style={{ margin: 0, color: textMain, fontSize: '1.1rem', fontWeight: 700 }}>
                         {item.name}
                       </h3>
-                      <p style={{ margin: '6px 0 0', color: '#94a3b8', fontSize: '0.9rem' }}>
+                      <p style={{ margin: '6px 0 0', color: textMuted, fontSize: '0.9rem' }}>
                         {item.category?.name || 'Không xác định'}
                       </p>
-                      <p style={{ margin: '4px 0 0', color: '#cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}>
+                      <p style={{ margin: '4px 0 0', color: isDark ? '#cbd5e1' : '#334155', fontSize: '0.9rem', fontWeight: 600 }}>
                         {(item.price || 0).toLocaleString('vi-VN')} đ
                       </p>
                     </div>

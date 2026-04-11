@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useTheme } from '../ThemeContext';
 
 const sectionStyles = {
   page: {
     minHeight: '100vh',
     padding: '28px 16px 130px',
     fontFamily: 'Inter, system-ui, sans-serif',
-    background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1135 100%)',
     backgroundAttachment: 'fixed',
     color: '#f8fafc'
   },
@@ -299,6 +299,28 @@ function calculateCartTotal(cartItems) {
 }
 
 export default function TableMenu() {
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const pageBg = isDark
+    ? 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1135 100%)'
+    : 'linear-gradient(135deg, #e8edf8 0%, #f0f4ff 50%, #dde8ff 100%)';
+  const textMain = isDark ? '#f8fafc' : '#0f172a';
+  const textMuted = isDark ? '#94a3b8' : '#64748b';
+  const cardBg = isDark
+    ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(26, 31, 58, 0.8) 100%)'
+    : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)';
+  const cardBorderColor = isDark ? 'rgba(148, 163, 184, 0.12)' : 'rgba(15,23,42,0.1)';
+  const footerBg = isDark
+    ? 'linear-gradient(135deg, rgba(26, 31, 58, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)'
+    : 'linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(240,244,255,0.97) 100%)';
+  const footerGradient = isDark
+    ? 'linear-gradient(to top, rgba(10, 14, 39, 0.98), rgba(10, 14, 39, 0.7), transparent)'
+    : 'linear-gradient(to top, rgba(232,237,248,0.98), rgba(232,237,248,0.7), transparent)';
+  const searchBg = isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255,255,255,0.9)';
+  const searchBorderColor = isDark ? 'rgba(148, 163, 184, 0.12)' : '#e2e8f0';
+  const tabBg = isDark ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255,255,255,0.8)';
+
   const { tableId: tableIdParam } = useParams();
   const tableId = parseInt(tableIdParam, 10);
 
@@ -316,34 +338,34 @@ export default function TableMenu() {
   const [priceRange, setPriceRange] = useState([0, 1000000]);
 
   useEffect(() => {
-    async function fetchMenu() {
+    // Hàm fetch âm thầm (không bật loading spinner, không cuộn lên đầu)
+    async function refreshMenu() {
       try {
-        setLoading(true);
         const response = await axios.get(`http://localhost:3000/api/table/${tableId}/menu`);
         const menuCategories = response.data.categories || [];
         const table = response.data.table;
-
-        // Lấy tên bàn từ response
-        if (table && table.name) {
-          setTableName(table.name);
-          console.log('Tên bàn:', table.name);
-        }
-
+        if (table && table.name) setTableName(table.name);
         setCategories(menuCategories);
-        // Giữ nguyên tab đang chọn khi polling, mặc định 'all'
         setActiveCategoryId((prev) => prev || 'all');
       } catch (err) {
         console.error(err);
-        setError('Không thể tải thực đơn. Vui lòng thử lại sau.');
+      }
+    }
+
+    // Chỉ hiện loading spinner lần đầu mở trang
+    async function fetchMenuFirstLoad() {
+      try {
+        setLoading(true);
+        await refreshMenu();
       } finally {
         setLoading(false);
       }
     }
 
-    fetchMenu();
+    fetchMenuFirstLoad();
 
-    // Polling mỗi 3 giây để cập nhật trạng thái hàng
-    const pollInterval = setInterval(fetchMenu, 3000);
+    // Polling mỗi 5 giây để cập nhật trạng thái hàng — KHÔNG set loading
+    const pollInterval = setInterval(refreshMenu, 5000);
     return () => clearInterval(pollInterval);
   }, [tableId]);
 
@@ -414,16 +436,20 @@ export default function TableMenu() {
     : (categories.find((category) => category.id === activeCategoryId) || categories[0] || {});
 
   return (
-    <main style={sectionStyles.page}>
+    <main style={{ ...sectionStyles.page, background: pageBg, color: textMain }}>
       <header style={sectionStyles.header}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
           <div>
             <p style={{ margin: 0, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.82rem' }}>
               Gọi món nhanh
             </p>
-            <h1 style={sectionStyles.title}>{tableName}</h1>
+            <h1 style={{ ...sectionStyles.title }}>{tableName}</h1>
           </div>
-          <div style={sectionStyles.badge}>Dark Mode</div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <button onClick={toggleTheme} className="theme-toggle-btn">
+              {isDark ? '☀️ Light' : '🌙 Dark'}
+            </button>
+          </div>
         </div>
         <p style={sectionStyles.subtitle}>
           Thưởng thức tinh hoa ẩm thực được sắp xếp tinh tế theo danh mục. Chọn món yêu thích bằng nút (+) và hoàn tất đơn hàng dễ dàng ngay trên thanh điều hướng bên dưới
@@ -438,6 +464,10 @@ export default function TableMenu() {
           onClick={() => setActiveCategoryId('all')}
           style={{
             ...sectionStyles.tab,
+            background: activeCategoryId === 'all'
+              ? 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)'
+              : tabBg,
+            color: activeCategoryId === 'all' ? '#fff' : textMuted,
             ...(activeCategoryId === 'all' ? sectionStyles.tabActive : {})
           }}
         >
@@ -453,6 +483,10 @@ export default function TableMenu() {
               onClick={() => setActiveCategoryId(category.id)}
               style={{
                 ...sectionStyles.tab,
+                background: isActive
+                  ? 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)'
+                  : tabBg,
+                color: isActive ? '#fff' : textMuted,
                 ...(isActive ? sectionStyles.tabActive : {})
               }}
             >
@@ -469,9 +503,9 @@ export default function TableMenu() {
           placeholder="Tìm kiếm món ăn..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={sectionStyles.searchBox}
+          style={{ ...sectionStyles.searchBox, background: searchBg, borderColor: searchBorderColor, color: textMain }}
           onFocus={(e) => Object.assign(e.target.style, { borderColor: 'rgba(59, 130, 246, 0.4)', boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)' })}
-          onBlur={(e) => Object.assign(e.target.style, { borderColor: 'rgba(148, 163, 184, 0.12)', boxShadow: 'none' })}
+          onBlur={(e) => Object.assign(e.target.style, { borderColor: searchBorderColor, boxShadow: 'none' })}
         />
       </div>
 
@@ -508,6 +542,8 @@ export default function TableMenu() {
                             key={item.id}
                             style={{
                               ...sectionStyles.card,
+                              background: cardBg,
+                              border: `1.5px solid ${cardBorderColor}`,
                               position: 'relative',
                               opacity: !item.isAvailable ? 0.6 : 1
                             }}
@@ -529,8 +565,8 @@ export default function TableMenu() {
 
                             <div style={sectionStyles.cardBody}>
                               <div>
-                                <h2 style={sectionStyles.itemTitle}>{item.name}</h2>
-                                <p style={sectionStyles.itemDescription}>{item.description || 'Món đặc sắc được chế biến tươi ngon và hấp dẫn.'}</p>
+                                <h2 style={{ ...sectionStyles.itemTitle, color: textMain }}>{item.name}</h2>
+                                <p style={{ ...sectionStyles.itemDescription, color: textMuted }}>{item.description || 'Món đặc sắc được chế biến tươi ngon và hấp dẫn.'}</p>
                               </div>
                               <div style={sectionStyles.itemFooter}>
                                 <div style={sectionStyles.price}>{formatCurrency(item.price)}</div>
@@ -567,8 +603,8 @@ export default function TableMenu() {
         </section>
       )}
 
-      <div style={sectionStyles.stickyFooter}>
-        <div style={sectionStyles.footerCard}>
+      <div style={{ ...sectionStyles.stickyFooter, background: footerGradient }}>
+        <div style={{ ...sectionStyles.footerCard, background: footerBg, border: `1.5px solid ${cardBorderColor}` }}>
           <div style={sectionStyles.footerRow}>
             <div>
               <p style={sectionStyles.footerLabel}>Tổng số món</p>

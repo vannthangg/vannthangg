@@ -195,10 +195,22 @@ app.post('/api/admin/menu', upload.single('image'), async (req, res) => {
 });
 
 // 3. Cập nhật món ăn
-app.put('/api/admin/menu/:id', upload.single('image'), async (req, res) => {
+app.put('/api/admin/menu/:id', (req, res, next) => {
+  // Nếu request là multipart thì dùng multer, ngược lại dùng JSON body bình thường
+  const contentType = req.headers['content-type'] || '';
+  if (contentType.includes('multipart/form-data')) {
+    upload.single('image')(req, res, next);
+  } else {
+    next();
+  }
+}, async (req, res) => {
   try {
     const { id } = req.params;
     const { name, price, categoryId, description, image } = req.body;
+
+    if (!name || !price || !categoryId) {
+      return res.status(400).json({ error: 'Thiếu thông tin bắt buộc: name, price, categoryId' });
+    }
 
     const imageUrl = req.file 
       ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`
@@ -209,8 +221,8 @@ app.put('/api/admin/menu/:id', upload.single('image'), async (req, res) => {
       data: {
         name,
         price: Number(price),
-        image: imageUrl,
-        description,
+        image: imageUrl || null,
+        description: description || null,
         categoryId: Number(categoryId)
       },
       include: { category: true }

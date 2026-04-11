@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTheme } from '../ThemeContext';
 
 const styles = {
   container: {
@@ -116,6 +117,30 @@ const styles = {
 };
 
 export default function Login({onLogin}) {
+  const { theme, toggleTheme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const themeStyles = {
+    container: {
+      ...styles.container,
+      background: isDark
+        ? 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1135 100%)'
+        : 'linear-gradient(135deg, #e8edf8 0%, #f0f4ff 50%, #dde8ff 100%)'
+    },
+    card: {
+      ...styles.card,
+      background: isDark ? 'rgba(26, 31, 58, 0.8)' : 'rgba(255, 255, 255, 0.95)',
+      border: isDark ? '1px solid rgba(148, 163, 184, 0.12)' : '1px solid rgba(15,23,42,0.1)'
+    },
+    label: { ...styles.label, color: isDark ? '#cbd5e1' : '#475569' },
+    input: {
+      ...styles.input,
+      background: isDark ? 'rgba(15, 23, 42, 0.8)' : '#f8fafc',
+      color: isDark ? '#f8fafc' : '#0f172a',
+      border: isDark ? '1.5px solid rgba(148, 163, 184, 0.12)' : '1.5px solid #e2e8f0'
+    }
+  };
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -155,8 +180,17 @@ export default function Login({onLogin}) {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
+    <div style={themeStyles.container}>
+      {/* Theme toggle nổi */}
+      <button
+        onClick={toggleTheme}
+        className="theme-toggle-btn"
+        style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 100 }}
+      >
+        {isDark ? '☀️ Light' : '🌙 Dark'}
+      </button>
+
+      <div style={themeStyles.card}>
         <div style={styles.header}>
           
           <h1 style={styles.title}>Đăng nhập</h1>
@@ -165,7 +199,7 @@ export default function Login({onLogin}) {
 
         <form style={styles.form} onSubmit={handleLogin}>
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Tên đăng nhập</label>
+            <label style={themeStyles.label}>Tên đăng nhập</label>
             <input
               type="text"
               placeholder="Nhập tên tài khoản"
@@ -174,12 +208,12 @@ export default function Login({onLogin}) {
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
               required
-              style={styles.input}
+              style={themeStyles.input}
             />
           </div>
 
           <div style={styles.inputGroup}>
-            <label style={styles.label}>Mật khẩu</label>
+            <label style={themeStyles.label}>Mật khẩu</label>
             <input
               type="password"
               placeholder="Nhập mật khẩu"
@@ -188,7 +222,7 @@ export default function Login({onLogin}) {
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
               required
-              style={styles.input}
+              style={themeStyles.input}
             />
           </div>
 

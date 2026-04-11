@@ -1,7 +1,11 @@
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '../ThemeContext';
 
 export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+
+  const isDark = theme === 'dark';
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -12,14 +16,34 @@ export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: '#0f172a',
-      color: '#fff',
+      backgroundColor: isDark ? '#0f172a' : '#f0f4ff',
+      color: isDark ? '#fff' : '#0f172a',
       fontFamily: 'system-ui, sans-serif',
-      padding: '20px'
+      padding: '20px',
+      transition: 'background-color 0.3s ease, color 0.3s ease'
     }}>
       {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: '24px', maxWidth: '1400px', margin: '0 auto 24px' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        marginBottom: '24px',
+        maxWidth: '1400px',
+        margin: '0 auto 24px',
+        gap: '12px'
+      }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0, flex: 1 }}>{title}</h1>
+
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="theme-toggle-btn"
+          title={isDark ? 'Chuyển sang Light Mode' : 'Chuyển sang Dark Mode'}
+        >
+          {isDark ? '☀️ Light' : '🌙 Dark'}
+        </button>
+
+        {/* Logout */}
         <button
           onClick={handleLogout}
           style={{

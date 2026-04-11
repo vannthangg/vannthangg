@@ -1,10 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-:root {
+/* ═══════════════════════════════════════
+   DARK MODE (default)
+═══════════════════════════════════════ */
+:root,
+[data-theme="dark"] {
   --bg-color: #0a0e27;
   --bg-surface: #1a1f3a;
   --bg-surface-alt: #242d4a;
   --bg-surface-glass: rgba(26, 31, 58, 0.7);
+  --bg-card: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   --text-main: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
@@ -17,31 +22,107 @@
   --warning: #f59e0b;
   --danger: #ef4444;
   --border: rgba(148, 163, 184, 0.12);
+  --border-solid: #334155;
   --border-light: rgba(148, 163, 184, 0.08);
-  --radius-xl: 32px;
-  --radius-lg: 20px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
+  --input-bg: #0f172a;
+  --input-color: #fff;
+  --table-header-bg: rgba(59, 130, 246, 0.1);
+  --table-row-alt: rgba(139, 92, 246, 0.05);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 20px 60px rgba(0,0,0,0.5);
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
   --shadow-glass-sm: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
   --font-body: 'Inter', sans-serif;
   --font-display: 'Plus Jakarta Sans', sans-serif;
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   --transition-fast: all 0.15s ease-out;
+
+  /* Theme toggle button */
+  --toggle-bg: #1e293b;
+  --toggle-icon: '☀️';
+  --toggle-label: 'Light Mode';
+}
+
+/* ═══════════════════════════════════════
+   LIGHT MODE
+═══════════════════════════════════════ */
+[data-theme="light"] {
+  --bg-color: #f0f4ff;
+  --bg-surface: #ffffff;
+  --bg-surface-alt: #e8edf8;
+  --bg-surface-glass: rgba(255, 255, 255, 0.85);
+  --bg-card: linear-gradient(135deg, #ffffff 0%, #f1f5ff 100%);
+  --text-main: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --accent: #2563eb;
+  --accent-light: #3b82f6;
+  --accent-secondary: #7c3aed;
+  --accent-tertiary: #db2777;
+  --success: #059669;
+  --success-light: #34d399;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --border: rgba(15, 23, 42, 0.1);
+  --border-solid: #cbd5e1;
+  --border-light: rgba(15, 23, 42, 0.06);
+  --input-bg: #f8fafc;
+  --input-color: #0f172a;
+  --table-header-bg: rgba(59, 130, 246, 0.08);
+  --table-row-alt: rgba(139, 92, 246, 0.04);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-card: 0 8px 32px rgba(15, 23, 42, 0.1);
+  --shadow-glass: 0 8px 32px 0 rgba(15, 23, 42, 0.12);
+  --shadow-glass-sm: 0 4px 16px 0 rgba(15, 23, 42, 0.08);
+  --font-body: 'Inter', sans-serif;
+  --font-display: 'Plus Jakarta Sans', sans-serif;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --transition-fast: all 0.15s ease-out;
+
+  /* Theme toggle button */
+  --toggle-bg: #e0e7ff;
+  --toggle-icon: '🌙';
+  --toggle-label: 'Dark Mode';
+}
+
+/* ═══════════════════════════════════════
+   Theme Toggle Button
+═══════════════════════════════════════ */
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border-solid);
+  background: var(--toggle-bg);
+  color: var(--text-main);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.theme-toggle-btn:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
 }
 
 body {
   margin: 0;
   font-family: var(--font-body);
-  background: linear-gradient(135deg, var(--bg-color) 0%, #0d1135 50%, var(--bg-color) 100%));
+  background: var(--bg-color);
   background-attachment: fixed;
   color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 #root {

@@ -1,19 +1,57 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useTheme } from '../ThemeContext';
 
 export default function MenuManager() {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [form, setForm] = useState({
+  const [addForm, setAddForm] = useState({
+    name: '', price: '', categoryId: '', description: '', image: ''
+  });
+  const [editForm, setEditForm] = useState({
     name: '', price: '', categoryId: '', description: '', image: ''
   });
   const [editId, setEditId] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingEditImage, setUploadingEditImage] = useState(false);
+
+  // Theme-aware styles
+  const cardBg = isDark
+    ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+    : 'linear-gradient(135deg, #ffffff 0%, #f1f5ff 100%)';
+  const cardBorder = isDark ? '#334155' : '#cbd5e1';
+  const cardShadow = isDark ? '0 20px 60px rgba(0,0,0,0.5)' : '0 8px 32px rgba(15,23,42,0.1)';
+  const inputBg = isDark ? '#0f172a' : '#f8fafc';
+  const inputColor = isDark ? '#fff' : '#0f172a';
+  const inputBorder = isDark ? '1px solid #334155' : '1px solid #cbd5e1';
+  const textMain = isDark ? '#fff' : '#0f172a';
+  const textSub = isDark ? '#cbd5e1' : '#334155';
+  const textMuted = isDark ? '#94a3b8' : '#64748b';
+  const tableHeaderBg = isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.07)';
+  const tableRowAlt = isDark ? 'rgba(139, 92, 246, 0.05)' : 'rgba(139, 92, 246, 0.03)';
+  const modalBackdrop = isDark ? 'rgba(0,0,0,0.75)' : 'rgba(15,23,42,0.5)';
+  const modalBorder = isDark ? '#8b5cf6' : '#7c3aed';
+  const closeBtnBg = isDark ? '#334155' : '#e2e8f0';
+  const closeBtnColor = isDark ? '#fff' : '#334155';
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Khóa scroll khi modal mở
+  useEffect(() => {
+    if (showEditModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [showEditModal]);
 
   const fetchData = async () => {
     try {
@@ -30,11 +68,13 @@ export default function MenuManager() {
     }
   };
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e, isEdit = false) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    setUploadingImage(true);
+    if (isEdit) setUploadingEditImage(true);
+    else setUploadingImage(true);
+
     const formData = new FormData();
     formData.append('image', file);
 
@@ -42,31 +82,39 @@ export default function MenuManager() {
       const res = await axios.post('http://localhost:3000/api/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      setForm({ ...form, image: res.data.url });
+      if (isEdit) setEditForm(prev => ({ ...prev, image: res.data.url }));
+      else setAddForm(prev => ({ ...prev, image: res.data.url }));
       alert('Tải ảnh thành công!');
     } catch (err) {
       console.error('Upload error:', err);
       alert('Lỗi tải ảnh: ' + (err.response?.data?.error || err.message));
     } finally {
-      setUploadingImage(false);
+      if (isEdit) setUploadingEditImage(false);
+      else setUploadingImage(false);
     }
   };
 
-  const handleSave = async (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      if (editId) {
-        await axios.put(`http://localhost:3000/api/admin/menu/${editId}`, form);
-        alert('Cập nhật thành công!');
-      } else {
-        await axios.post('http://localhost:3000/api/admin/menu', form);
-        alert('Thêm thành công!');
-      }
-      setForm({ name: '', price: '', categoryId: '', description: '', image: '' });
-      setEditId(null);
+      await axios.post('http://localhost:3000/api/admin/menu', addForm);
+      alert('Thêm thành công!');
+      setAddForm({ name: '', price: '', categoryId: '', description: '', image: '' });
       fetchData();
     } catch (err) {
-      alert('Lỗi: ' + err.response?.data?.error || err.message);
+      alert('Lỗi: ' + (err.response?.data?.error || err.message));
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.put(`http://localhost:3000/api/admin/menu/${editId}`, editForm);
+      alert('Cập nhật thành công!');
+      closeEditModal();
+      fetchData();
+    } catch (err) {
+      alert('Lỗi: ' + (err.response?.data?.error || err.message));
     }
   };
 
@@ -83,7 +131,7 @@ export default function MenuManager() {
   };
 
   const handleEdit = (item) => {
-    setForm({
+    setEditForm({
       name: item.name,
       price: item.price,
       categoryId: item.categoryId,
@@ -91,81 +139,269 @@ export default function MenuManager() {
       image: item.image
     });
     setEditId(item.id);
+    setShowEditModal(true);
+  };
+
+  const closeEditModal = () => {
+    setShowEditModal(false);
+    setEditId(null);
+    setEditForm({ name: '', price: '', categoryId: '', description: '', image: '' });
+  };
+
+  const inputStyle = {
+    padding: '12px',
+    borderRadius: '8px',
+    border: inputBorder,
+    background: inputBg,
+    color: inputColor,
+    fontSize: '0.95rem',
+    outline: 'none',
+    width: '100%',
+    boxSizing: 'border-box'
   };
 
   return (
     <div style={{ display: 'grid', gap: '40px' }}>
-      {/* Form */}
-      <section style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderRadius: '24px', padding: '40px', color: '#e2e8f0', border: '2px solid #334155', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
-        <h2 style={{ margin: 0, marginBottom: '24px', color: '#fff', fontSize: '1.8rem', fontWeight: '800' }}>{editId ? 'Cập nhật Món' : 'Thêm Món Mới'}</h2>
-        <form onSubmit={handleSave} style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+
+      {/* ─── Modal Sửa Món ─── */}
+      {showEditModal && (
+        <div
+          onClick={(e) => { if (e.target === e.currentTarget) closeEditModal(); }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: modalBackdrop,
+            backdropFilter: 'blur(6px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '20px',
+            animation: 'fadeIn 0.2s ease'
+          }}
+        >
+          <style>{`
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+          `}</style>
+          <div style={{
+            background: cardBg,
+            borderRadius: '24px',
+            padding: '40px',
+            color: textSub,
+            border: `2px solid ${modalBorder}`,
+            boxShadow: '0 25px 80px rgba(139,92,246,0.3)',
+            width: '100%',
+            maxWidth: '620px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            animation: 'slideUp 0.25s ease'
+          }}>
+            {/* Header Modal */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
+              <h2 style={{ margin: 0, color: textMain, fontSize: '1.6rem', fontWeight: '800' }}>
+                ✏️ Cập nhật Món
+              </h2>
+              <button
+                onClick={closeEditModal}
+                style={{
+                  background: closeBtnBg, border: 'none', color: closeBtnColor,
+                  width: '36px', height: '36px', borderRadius: '50%',
+                  cursor: 'pointer', fontSize: '1.1rem', display: 'flex',
+                  alignItems: 'center', justifyContent: 'center',
+                  transition: 'background 0.2s'
+                }}
+                onMouseEnter={e => e.target.style.background = '#ef4444'}
+                onMouseLeave={e => e.target.style.background = closeBtnBg}
+              >✕</button>
+            </div>
+
+            {/* Form Sửa */}
+            <form onSubmit={handleUpdate} style={{ display: 'grid', gap: '14px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', color: textSub, fontSize: '0.85rem' }}>Tên món *</label>
+                <input
+                  type="text"
+                  placeholder="Tên món"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  required
+                  style={inputStyle}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', color: textSub, fontSize: '0.85rem' }}>Giá (đ) *</label>
+                  <input
+                    type="number"
+                    placeholder="Giá"
+                    value={editForm.price}
+                    onChange={(e) => setEditForm({ ...editForm, price: e.target.value })}
+                    required
+                    style={inputStyle}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', color: textSub, fontSize: '0.85rem' }}>Danh mục *</label>
+                  <select
+                    value={editForm.categoryId}
+                    onChange={(e) => setEditForm({ ...editForm, categoryId: e.target.value })}
+                    required
+                    style={{ ...inputStyle }}
+                  >
+                    <option value="">Chọn danh mục</option>
+                    {categories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', color: textSub, fontSize: '0.85rem' }}>Mô tả</label>
+                <input
+                  type="text"
+                  placeholder="Mô tả"
+                  value={editForm.description}
+                  onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                  style={inputStyle}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', color: textSub, fontSize: '0.85rem' }}>Ảnh Món</label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, true)}
+                    disabled={uploadingEditImage}
+                    style={{ ...inputStyle, padding: '8px' }}
+                  />
+                  {uploadingEditImage && <span style={{ color: textMuted, whiteSpace: 'nowrap' }}>Đang tải...</span>}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '6px', fontWeight: '600', color: textSub, fontSize: '0.85rem' }}>Hoặc URL ảnh</label>
+                <input
+                  type="url"
+                  placeholder="http://..."
+                  value={editForm.image}
+                  onChange={(e) => setEditForm({ ...editForm, image: e.target.value })}
+                  style={inputStyle}
+                />
+              </div>
+
+              {editForm.image && (
+                <div style={{ textAlign: 'center' }}>
+                  <img
+                    src={editForm.image}
+                    alt="preview"
+                    style={{ maxWidth: '160px', maxHeight: '160px', borderRadius: '10px', border: '2px solid #8b5cf6', objectFit: 'cover' }}
+                  />
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                <button
+                  type="submit"
+                  disabled={uploadingEditImage}
+                  style={{
+                    flex: 1, padding: '14px',
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+                    color: 'white', border: 'none', borderRadius: '10px',
+                    cursor: uploadingEditImage ? 'not-allowed' : 'pointer',
+                    fontWeight: '700', fontSize: '1rem',
+                    transition: 'opacity 0.2s'
+                  }}
+                >
+                  💾 Lưu thay đổi
+                </button>
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  style={{
+                    padding: '14px 20px',
+                    background: closeBtnBg, color: closeBtnColor,
+                    border: 'none', borderRadius: '10px',
+                    cursor: 'pointer', fontWeight: '600', fontSize: '1rem'
+                  }}
+                >
+                  Hủy
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Form Thêm Món Mới ─── */}
+      <section style={{ background: cardBg, borderRadius: '24px', padding: '40px', color: textSub, border: `2px solid ${cardBorder}`, boxShadow: cardShadow }}>
+        <h2 style={{ margin: 0, marginBottom: '24px', color: textMain, fontSize: '1.8rem', fontWeight: '800' }}>Thêm Món Mới</h2>
+        <form onSubmit={handleAdd} style={{ display: 'grid', gap: '16px', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
           <input
             type="text"
             placeholder="Tên món"
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            value={addForm.name}
+            onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
             required
-            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+            style={{ padding: '12px', borderRadius: '8px', border: inputBorder, background: inputBg, color: inputColor }}
           />
           <input
             type="number"
             placeholder="Giá"
-            value={form.price}
-            onChange={(e) => setForm({ ...form, price: e.target.value })}
+            value={addForm.price}
+            onChange={(e) => setAddForm({ ...addForm, price: e.target.value })}
             required
-             style={{ padding: '12px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+            style={{ padding: '12px', borderRadius: '8px', border: inputBorder, background: inputBg, color: inputColor }}
           />
           <select
-            value={form.categoryId}
-            onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
+            value={addForm.categoryId}
+            onChange={(e) => setAddForm({ ...addForm, categoryId: e.target.value })}
             required
-            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+            style={{ padding: '12px', borderRadius: '8px', border: inputBorder, background: inputBg, color: inputColor }}
           >
             <option value="">Chọn danh mục</option>
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
           <input
             type="text"
             placeholder="Mô tả"
-            value={form.description}
-            onChange={(e) => setForm({ ...form, description: e.target.value })}
-            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+            value={addForm.description}
+            onChange={(e) => setAddForm({ ...addForm, description: e.target.value })}
+            style={{ padding: '12px', borderRadius: '8px', border: inputBorder, background: inputBg, color: inputColor }}
           />
-          
+
           {/* Image Upload */}
           <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '12px', alignItems: 'center' }}>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#cbd5e1' }}>Ảnh Món:</label>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: textSub }}>Ảnh Món:</label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={handleImageUpload}
+                  onChange={(e) => handleImageUpload(e, false)}
                   disabled={uploadingImage}
-                  style={{ flex: 1, padding: '8px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+                  style={{ flex: 1, padding: '8px', borderRadius: '8px', border: inputBorder, background: inputBg, color: inputColor }}
                 />
-                {uploadingImage && <span style={{ color: '#94a3b8' }}>Đang tải...</span>}
+                {uploadingImage && <span style={{ color: textMuted }}>Đang tải...</span>}
               </div>
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#cbd5e1' }}>Hoặc URL:</label>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: textSub }}>Hoặc URL:</label>
               <input
                 type="url"
                 placeholder="http://..."
-                value={form.image}
-                onChange={(e) => setForm({ ...form, image: e.target.value })}
-                style={{ padding: '8px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff', width: '100%' }}
+                value={addForm.image}
+                onChange={(e) => setAddForm({ ...addForm, image: e.target.value })}
+                style={{ padding: '8px', borderRadius: '8px', border: inputBorder, background: inputBg, color: inputColor, width: '100%' }}
               />
             </div>
           </div>
-          {/* Preview Ảnh */}
-          {form.image && (
+
+          {addForm.image && (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
-              <img src={form.image} alt="preview" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px', border: '2px solid #334155' }} />
+              <img src={addForm.image} alt="preview" style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: '8px', border: `2px solid ${cardBorder}` }} />
             </div>
           )}
 
@@ -176,78 +412,52 @@ export default function MenuManager() {
               style={{
                 padding: '12px 24px',
                 background: '#8b5cf6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
+                color: 'white', border: 'none', borderRadius: '8px',
                 cursor: uploadingImage ? 'not-allowed' : 'pointer',
                 fontWeight: '600'
               }}
             >
-              {editId ? 'Cập nhật Món' : 'Thêm Món'}
+              Thêm Món
             </button>
-            {editId && (
-              <button
-                type="button"
-                onClick={() => {
-                  setEditId(null);
-                  setForm({ name: '', price: '', categoryId: '', description: '', image: '' });
-                }}
-                style={{
-                  padding: '12px 24px',
-                  background: '#ef4444',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontWeight: '600'
-                }}
-              >
-                Hủy
-              </button>
-            )}
           </div>
         </form>
       </section>
 
-      {/* Danh sách */}
-      <section style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderRadius: '24px', padding: '40px', color: '#e2e8f0', border: '2px solid #334155', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
-        <h2 style={{ margin: 0, marginBottom: '24px', color: '#fff', fontSize: '1.8rem', fontWeight: '800' }}>Danh sách Món ({menuItems.length})</h2>
+      {/* ─── Danh sách Món ─── */}
+      <section style={{ background: cardBg, borderRadius: '24px', padding: '40px', color: textSub, border: `2px solid ${cardBorder}`, boxShadow: cardShadow }}>
+        <h2 style={{ margin: 0, marginBottom: '24px', color: textMain, fontSize: '1.8rem', fontWeight: '800' }}>Danh sách Món ({menuItems.length})</h2>
         {loading ? (
-          <p style={{ textAlign: 'center', color: '#94a3b8' }}>Đang tải...</p>
+          <p style={{ textAlign: 'center', color: textMuted }}>Đang tải...</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
               <thead>
-                <tr style={{ borderBottom: '2px solid #334155', backgroundColor: 'rgba(59, 130, 246, 0.1)' }}>
-                  <th style={{ padding: '12px', textAlign: 'left', color: '#e0e7ff', fontWeight: '600' }}>Tên Món</th>
-                  <th style={{ padding: '12px', textAlign: 'left', color: '#e0e7ff', fontWeight: '600' }}>Danh Mục</th>
-                  <th style={{ padding: '12px', textAlign: 'left', color: '#e0e7ff', fontWeight: '600' }}>Giá</th>
-                  <th style={{ padding: '12px', textAlign: 'center', color: '#e0e7ff', fontWeight: '600' }}>Hành động</th>
+                <tr style={{ borderBottom: `2px solid ${cardBorder}`, backgroundColor: tableHeaderBg }}>
+                  <th style={{ padding: '12px', textAlign: 'left', color: textMain, fontWeight: '600' }}>Tên Món</th>
+                  <th style={{ padding: '12px', textAlign: 'left', color: textMain, fontWeight: '600' }}>Danh Mục</th>
+                  <th style={{ padding: '12px', textAlign: 'left', color: textMain, fontWeight: '600' }}>Giá</th>
+                  <th style={{ padding: '12px', textAlign: 'center', color: textMain, fontWeight: '600' }}>Hành động</th>
                 </tr>
               </thead>
               <tbody>
                 {menuItems.map((item, idx) => (
-                  <tr key={item.id} style={{ borderBottom: '1px solid #334155', backgroundColor: idx % 2 === 0 ? 'rgba(139, 92, 246, 0.05)' : 'transparent' }}>
-                    <td style={{ padding: '12px', color: '#cbd5e1' }}>
+                  <tr key={item.id} style={{ borderBottom: `1px solid ${cardBorder}`, backgroundColor: idx % 2 === 0 ? tableRowAlt : 'transparent' }}>
+                    <td style={{ padding: '12px', color: textSub }}>
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                        <img src={item.image} alt={item.name} style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover', border: '1px solid #334155' }} />
-                        <span style={{ color: '#e0e7ff', fontWeight: '500' }}>{item.name}</span>
+                        <img src={item.image} alt={item.name} style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover', border: `1px solid ${cardBorder}` }} />
+                        <span style={{ color: textMain, fontWeight: '500' }}>{item.name}</span>
                       </div>
                     </td>
-                    <td style={{ padding: '12px', color: '#cbd5e1' }}>{item.category?.name}</td>
-                    <td style={{ padding: '12px', color: '#cbd5e1', fontWeight: '500' }}>{item.price.toLocaleString()} đ</td>
+                    <td style={{ padding: '12px', color: textSub }}>{item.category?.name}</td>
+                    <td style={{ padding: '12px', color: textSub, fontWeight: '500' }}>{item.price.toLocaleString()} đ</td>
                     <td style={{ padding: '12px', textAlign: 'center', display: 'flex', gap: '8px', justifyContent: 'center' }}>
                       <button
                         onClick={() => handleEdit(item)}
                         style={{
                           padding: '6px 12px',
                           background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
-                          color: '#000',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontWeight: '600',
-                          fontSize: '0.8rem'
+                          color: '#000', border: 'none', borderRadius: '4px',
+                          cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem'
                         }}
                       >
                         Sửa
@@ -257,12 +467,8 @@ export default function MenuManager() {
                         style={{
                           padding: '6px 12px',
                           background: '#ef4444',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          fontWeight: '600',
-                          fontSize: '0.8rem'
+                          color: 'white', border: 'none', borderRadius: '4px',
+                          cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem'
                         }}
                       >
                         Xóa
