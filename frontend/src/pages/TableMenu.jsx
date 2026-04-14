@@ -1,15 +1,30 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useTheme } from '../ThemeContext';
 
 const sectionStyles = {
   page: {
     minHeight: '100vh',
-    padding: '28px 16px 130px',
+    padding: '28px 16px 28px',
     fontFamily: 'Inter, system-ui, sans-serif',
     backgroundAttachment: 'fixed',
-    color: '#f8fafc'
+    color: '#f8fafc',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  pageContainer: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 480px',
+    gap: '24px',
+    maxWidth: '1400px',
+    margin: '0 auto',
+    width: '100%'
+  },
+  mainContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px'
   },
   header: {
     marginBottom: '32px',
@@ -196,22 +211,21 @@ const sectionStyles = {
     cursor: 'not-allowed'
   },
   stickyFooter: {
-    position: 'fixed',
-    inset: 'auto 0 0',
-    width: '100%',
-    padding: '16px 16px 24px',
-    zIndex: 50,
-    background: 'linear-gradient(to top, rgba(10, 14, 39, 0.98), rgba(10, 14, 39, 0.7), transparent)',
-    backdropFilter: 'blur(12px)'
+    position: 'sticky',
+    top: '28px',
+    height: 'fit-content',
+    maxHeight: 'calc(100vh - 56px)',
+    display: 'flex',
+    flexDirection: 'column'
   },
   footerCard: {
     borderRadius: '20px',
     background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
     border: '1.5px solid rgba(96, 165, 250, 0.2)',
-    padding: '20px',
+    padding: '24px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px',
+    gap: '20px',
     boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
   },
   footerRow: {
@@ -223,13 +237,13 @@ const sectionStyles = {
   },
   footerLabel: {
     color: '#94a3b8',
-    fontSize: '0.9rem',
+    fontSize: '1rem',
     fontWeight: 600,
     textTransform: 'uppercase',
     letterSpacing: '0.05em'
   },
   footerTotal: {
-    fontSize: '1.4rem',
+    fontSize: '2rem',
     fontWeight: 800,
     background: 'linear-gradient(135deg, #60a5fa 0%, #8b5cf6 100%)',
     backgroundClip: 'text',
@@ -241,11 +255,11 @@ const sectionStyles = {
     borderRadius: '12px',
     background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
     color: '#fff',
-    padding: '14px 24px',
+    padding: '18px 24px',
     fontWeight: 800,
     cursor: 'pointer',
     width: '100%',
-    fontSize: '1rem',
+    fontSize: '1.05rem',
     transition: 'var(--transition)',
     boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)'
   },
@@ -321,6 +335,7 @@ export default function TableMenu() {
   const searchBorderColor = isDark ? 'rgba(148, 163, 184, 0.12)' : '#e2e8f0';
   const tabBg = isDark ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255,255,255,0.8)';
 
+  const navigate = useNavigate();
   const { tableId: tableIdParam } = useParams();
   const tableId = parseInt(tableIdParam, 10);
 
@@ -439,11 +454,33 @@ export default function TableMenu() {
     <main style={{ ...sectionStyles.page, background: pageBg, color: textMain }}>
       <header style={sectionStyles.header}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
-          <div>
-            <p style={{ margin: 0, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.82rem' }}>
-              Gọi món nhanh
-            </p>
-            <h1 style={{ ...sectionStyles.title }}>{tableName}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <button
+              onClick={() => navigate(-1)}
+              style={{
+                border: 'none',
+                background: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
+                color: '#fff',
+                padding: '10px 14px',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '0.95rem',
+                transition: 'var(--transition)',
+                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
+              }}
+              title="Quay lại"
+              onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.05)', boxShadow: '0 6px 16px rgba(239, 68, 68, 0.4)' })}
+              onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' })}
+            >
+              ← Quay lại
+            </button>
+            <div>
+              <p style={{ margin: 0, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.82rem' }}>
+                Gọi món nhanh
+              </p>
+              <h1 style={{ ...sectionStyles.title }}>{tableName}</h1>
+            </div>
           </div>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <button onClick={toggleTheme} className="theme-toggle-btn">
@@ -503,7 +540,7 @@ export default function TableMenu() {
           placeholder="Tìm kiếm món ăn..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ ...sectionStyles.searchBox, background: searchBg, borderColor: searchBorderColor, color: textMain }}
+          style={{ ...sectionStyles.searchBox, background: searchBg, borderColor: searchBorderColor, color: textMain, maxWidth: '500px' }}
           onFocus={(e) => Object.assign(e.target.style, { borderColor: 'rgba(59, 130, 246, 0.4)', boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)' })}
           onBlur={(e) => Object.assign(e.target.style, { borderColor: searchBorderColor, boxShadow: 'none' })}
         />
@@ -512,124 +549,207 @@ export default function TableMenu() {
       {loading ? (
         <div style={{ textAlign: 'center', color: '#94a3b8', marginTop: '80px' }}>Đang tải thực đơn...</div>
       ) : (
-        <section style={{ maxWidth: '940px', margin: '0 auto' }}>
-          {activeCategory ? (
-            <div style={{ display: 'grid', gap: '24px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                <div>
-                  <h2 style={{ margin: '0 0 8px', color: '#fff', fontSize: '1.25rem' }}>{activeCategory.name}</h2>
-                  <p style={{ margin: 0, color: '#94a3b8' }}>{(activeCategory.items?.length || 0)} món ăn</p>
+        <div style={sectionStyles.pageContainer}>
+          <section style={sectionStyles.mainContent}>
+            {activeCategory ? (
+              <div style={{ display: 'grid', gap: '24px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                  <div>
+                    <h2 style={{ margin: '0 0 8px', color: '#fff', fontSize: '1.25rem' }}>{activeCategory.name}</h2>
+                    <p style={{ margin: 0, color: '#94a3b8' }}>{(activeCategory.items?.length || 0)} món ăn</p>
+                  </div>
+                  <div style={sectionStyles.badge}>{(activeCategory.items || []).filter((item) => item.isAvailable).length} còn hàng</div>
                 </div>
-                <div style={sectionStyles.badge}>{(activeCategory.items || []).filter((item) => item.isAvailable).length} còn hàng</div>
+
+                {/* Filtered/Searched Items */}
+                {(() => {
+                  const filteredItems = (activeCategory.items || []).filter(item => {
+                    const matchSearch = searchTerm === '' ||
+                      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
+                    const matchPrice = item.price >= priceRange[0] && item.price <= priceRange[1];
+                    return matchSearch && matchPrice;
+                  });
+
+                  return (
+                    <>
+                      {filteredItems.length > 0 ? (
+                        <div style={sectionStyles.cardList}>
+                          {filteredItems.map((item) => (
+                            <article
+                              key={item.id}
+                              style={{
+                                ...sectionStyles.card,
+                                background: cardBg,
+                                border: `1.5px solid ${cardBorderColor}`,
+                                position: 'relative',
+                                opacity: !item.isAvailable ? 0.6 : 1
+                              }}
+                              onMouseEnter={(e) => item.isAvailable && Object.assign(e.currentTarget.style, sectionStyles.cardHover)}
+                              onMouseLeave={(e) => item.isAvailable && Object.assign(e.currentTarget.style, { transform: 'translateY(0)', borderColor: 'rgba(148, 163, 184, 0.12)', boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)' })}
+                            >
+                              <img
+                                src={item.image || placeholderImage}
+                                alt={item.name}
+                                style={{ ...sectionStyles.image, filter: !item.isAvailable ? 'grayscale(100%)' : 'none' }}
+                              />
+
+                              {/* Badge "Đã hết" */}
+                              {!item.isAvailable && (
+                                <div style={sectionStyles.outOfStockOverlay}>
+                                  <div style={sectionStyles.outOfStockBadge}>Đã hết món</div>
+                                </div>
+                              )}
+
+                              <div style={sectionStyles.cardBody}>
+                                <div>
+                                  <h2 style={{ ...sectionStyles.itemTitle, color: textMain }}>{item.name}</h2>
+                                  <p style={{ ...sectionStyles.itemDescription, color: textMuted }}>{item.description || 'Món đặc sắc được chế biến tươi ngon và hấp dẫn.'}</p>
+                                </div>
+                                <div style={sectionStyles.itemFooter}>
+                                  <div style={sectionStyles.price}>{formatCurrency(item.price)}</div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleAddToCart(item)}
+                                    disabled={!item.isAvailable}
+                                    style={{
+                                      ...sectionStyles.addButton,
+                                      ...(item.isAvailable ? {} : sectionStyles.addButtonDisabled)
+                                    }}
+                                    onMouseEnter={(e) => item.isAvailable && Object.assign(e.currentTarget.style, sectionStyles.addButtonHover)}
+                                    onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' })}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px 0' }}>
+                          Không tìm thấy món nào phù hợp
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
+            ) : (
+              <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px 0' }}>Không tìm thấy danh mục.</div>
+            )}
+          </section>
+
+          {/* Sidebar giỏ hàng */}
+          <div style={sectionStyles.stickyFooter}>
+            <div style={{ ...sectionStyles.footerCard, background: footerBg, border: `1.5px solid ${cardBorderColor}` }}>
+              {/* Giỏ hàng chi tiết */}
+              {cart.length > 0 && (
+                <div style={{ maxHeight: '280px', overflowY: 'auto', marginBottom: '12px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}` }}>
+                  {cart.map((entry) => (
+                    <div
+                      key={entry.menuItem.id}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '10px 0',
+                        gap: '12px'
+                      }}
+                    >
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 600, color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {entry.menuItem.name}
+                        </p>
+                        <p style={{ margin: 0, fontSize: '0.95rem', color: '#94a3b8' }}>
+                          {formatCurrency(entry.menuItem.price)}
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button
+                          onClick={() => handleQuantityChange(entry.menuItem.id, -1)}
+                          style={{
+                            border: 'none',
+                            background: '#ef4444',
+                            color: '#fff',
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: 700,
+                            fontSize: '1.1rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'var(--transition)',
+                            padding: 0
+                          }}
+                          onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.1)', background: '#dc2626' })}
+                          onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', background: '#ef4444' })}
+                        >
+                          −
+                        </button>
+                        <span style={{ minWidth: '24px', textAlign: 'center', fontWeight: 700, color: '#f8fafc', fontSize: '1rem' }}>
+                          {entry.quantity}
+                        </span>
+                        <button
+                          onClick={() => handleQuantityChange(entry.menuItem.id, 1)}
+                          style={{
+                            border: 'none',
+                            background: '#3b82f6',
+                            color: '#fff',
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: 700,
+                            fontSize: '1.1rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'var(--transition)',
+                            padding: 0
+                          }}
+                          onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.1)', background: '#2563eb' })}
+                          onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', background: '#3b82f6' })}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Thông tin tổng cộng */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '12px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}` }}>
+                <div>
+                  <p style={sectionStyles.footerLabel}>Tổng số món</p>
+                  <p style={{ ...sectionStyles.footerTotal, fontSize: '1.8rem' }}>{cartItemCount}</p>
+                </div>
+                <div>
+                  <p style={sectionStyles.footerLabel}>Tổng giá</p>
+                  <p style={{ ...sectionStyles.footerTotal, fontSize: '1.8rem' }}>{formatCurrency(cartTotal)}</p>
+                </div>
               </div>
 
-              {/* Filtered/Searched Items */}
-              {(() => {
-                const filteredItems = (activeCategory.items || []).filter(item => {
-                  const matchSearch = searchTerm === '' ||
-                    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
-                  const matchPrice = item.price >= priceRange[0] && item.price <= priceRange[1];
-                  return matchSearch && matchPrice;
-                });
-
-                return (
-                  <>
-                    {filteredItems.length > 0 ? (
-                      <div style={sectionStyles.cardList}>
-                        {filteredItems.map((item) => (
-                          <article
-                            key={item.id}
-                            style={{
-                              ...sectionStyles.card,
-                              background: cardBg,
-                              border: `1.5px solid ${cardBorderColor}`,
-                              position: 'relative',
-                              opacity: !item.isAvailable ? 0.6 : 1
-                            }}
-                            onMouseEnter={(e) => item.isAvailable && Object.assign(e.currentTarget.style, sectionStyles.cardHover)}
-                            onMouseLeave={(e) => item.isAvailable && Object.assign(e.currentTarget.style, { transform: 'translateY(0)', borderColor: 'rgba(148, 163, 184, 0.12)', boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)' })}
-                          >
-                            <img
-                              src={item.image || placeholderImage}
-                              alt={item.name}
-                              style={{ ...sectionStyles.image, filter: !item.isAvailable ? 'grayscale(100%)' : 'none' }}
-                            />
-
-                            {/* Badge "Đã hết" */}
-                            {!item.isAvailable && (
-                              <div style={sectionStyles.outOfStockOverlay}>
-                                <div style={sectionStyles.outOfStockBadge}>Đã hết món</div>
-                              </div>
-                            )}
-
-                            <div style={sectionStyles.cardBody}>
-                              <div>
-                                <h2 style={{ ...sectionStyles.itemTitle, color: textMain }}>{item.name}</h2>
-                                <p style={{ ...sectionStyles.itemDescription, color: textMuted }}>{item.description || 'Món đặc sắc được chế biến tươi ngon và hấp dẫn.'}</p>
-                              </div>
-                              <div style={sectionStyles.itemFooter}>
-                                <div style={sectionStyles.price}>{formatCurrency(item.price)}</div>
-                                <button
-                                  type="button"
-                                  onClick={() => handleAddToCart(item)}
-                                  disabled={!item.isAvailable}
-                                  style={{
-                                    ...sectionStyles.addButton,
-                                    ...(item.isAvailable ? {} : sectionStyles.addButtonDisabled)
-                                  }}
-                                  onMouseEnter={(e) => item.isAvailable && Object.assign(e.currentTarget.style, sectionStyles.addButtonHover)}
-                                  onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' })}
-                                >
-                                  +
-                                </button>
-                              </div>
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                    ) : (
-                      <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px 0' }}>
-                        Không tìm thấy món nào phù hợp
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px 0' }}>Không tìm thấy danh mục.</div>
-          )}
-        </section>
-      )}
-
-      <div style={{ ...sectionStyles.stickyFooter, background: footerGradient }}>
-        <div style={{ ...sectionStyles.footerCard, background: footerBg, border: `1.5px solid ${cardBorderColor}` }}>
-          <div style={sectionStyles.footerRow}>
-            <div>
-              <p style={sectionStyles.footerLabel}>Tổng số món</p>
-              <p style={sectionStyles.footerTotal}>{cartItemCount}</p>
-            </div>
-            <div>
-              <p style={sectionStyles.footerLabel}>Tổng giá</p>
-              <p style={sectionStyles.footerTotal}>{formatCurrency(cartTotal)}</p>
+              <button
+                type="button"
+                onClick={handleOrder}
+                disabled={cart.length === 0}
+                style={{
+                  ...sectionStyles.checkoutButton,
+                  ...(cart.length === 0 && sectionStyles.checkoutButtonDisabled)
+                }}
+                onMouseEnter={(e) => cart.length > 0 && Object.assign(e.currentTarget.style, sectionStyles.checkoutButtonHover)}
+                onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'translateY(0)', boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)' })}
+              >
+                Đặt món ngay
+              </button>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={handleOrder}
-            disabled={cart.length === 0}
-            style={{
-              ...sectionStyles.checkoutButton,
-              ...(cart.length === 0 && sectionStyles.checkoutButtonDisabled)
-            }}
-            onMouseEnter={(e) => cart.length > 0 && Object.assign(e.currentTarget.style, sectionStyles.checkoutButtonHover)}
-            onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'translateY(0)', boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)' })}
-          >
-            Đặt món ngay
-          </button>
         </div>
-      </div>
+      )}
 
       {(message || error) && (
         <div style={{
