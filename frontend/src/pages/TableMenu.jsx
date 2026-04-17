@@ -5,30 +5,35 @@ import { useTheme } from '../ThemeContext';
 
 const sectionStyles = {
   page: {
-    minHeight: '100vh',
+    height: '100vh',
+    overflow: 'hidden',
     padding: '28px 16px 28px',
     fontFamily: 'Inter, system-ui, sans-serif',
-    backgroundAttachment: 'fixed',
     color: '#f8fafc',
     display: 'flex',
     flexDirection: 'column'
   },
   pageContainer: {
     display: 'grid',
-    gridTemplateColumns: '1fr 480px',
-    gap: '24px',
-    maxWidth: '1400px',
+    gridTemplateColumns: '6fr 4fr',
+    gap: '32px',
+    maxWidth: '1600px',
     margin: '0 auto',
-    width: '100%'
+    width: '100%',
+    flex: 1,
+    overflow: 'hidden'
   },
   mainContent: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '24px'
+    gap: '12px',
+    overflowY: 'auto',
+    paddingRight: '6px',
+    paddingBottom: '24px'
   },
   header: {
-    marginBottom: '32px',
-    animation: 'fadeIn 0.6s ease-out'
+    animation: 'fadeIn 0.6s ease-out',
+    flexShrink: 0
   },
   title: {
     margin: 0,
@@ -66,9 +71,9 @@ const sectionStyles = {
     display: 'flex',
     gap: '12px',
     overflowX: 'auto',
-    paddingBottom: '12px',
-    marginBottom: '28px',
-    scrollBehavior: 'smooth'
+    paddingBottom: '4px',
+    scrollBehavior: 'smooth',
+    flexShrink: 0
   },
   tab: {
     flex: '0 0 auto',
@@ -211,22 +216,21 @@ const sectionStyles = {
     cursor: 'not-allowed'
   },
   stickyFooter: {
-    position: 'sticky',
-    top: '28px',
-    height: 'fit-content',
-    maxHeight: 'calc(100vh - 56px)',
+    height: '100%',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    overflowY: 'hidden'
   },
   footerCard: {
     borderRadius: '20px',
     background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
     border: '1.5px solid rgba(96, 165, 250, 0.2)',
-    padding: '24px',
+    padding: '16px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px',
-    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)'
+    gap: '12px',
+    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+    height: '100%'
   },
   footerRow: {
     display: 'flex',
@@ -412,7 +416,7 @@ export default function TableMenu() {
       prevCart
         .map((entry) =>
           entry.menuItem.id === menuItemId
-            ? { ...entry, quantity: Math.max(1, entry.quantity + delta) }
+            ? { ...entry, quantity: entry.quantity + delta }
             : entry
         )
         .filter((entry) => entry.quantity > 0)
@@ -452,46 +456,41 @@ export default function TableMenu() {
 
   return (
     <main style={{ ...sectionStyles.page, background: pageBg, color: textMain }}>
-      <header style={sectionStyles.header}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button
-              onClick={() => navigate(-1)}
-              style={{
-                border: 'none',
-                background: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
-                color: '#fff',
-                padding: '10px 14px',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                fontWeight: 700,
-                fontSize: '0.95rem',
-                transition: 'var(--transition)',
-                boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
-              }}
-              title="Quay lại"
-              onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.05)', boxShadow: '0 6px 16px rgba(239, 68, 68, 0.4)' })}
-              onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' })}
-            >
-              ← Quay lại
-            </button>
-            <div>
-              <p style={{ margin: 0, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.82rem' }}>
-                Gọi món nhanh
-              </p>
-              <h1 style={{ ...sectionStyles.title }}>{tableName}</h1>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <button onClick={toggleTheme} className="theme-toggle-btn">
-              {isDark ? '☀️ Light' : '🌙 Dark'}
-            </button>
-          </div>
-        </div>
-        <p style={sectionStyles.subtitle}>
-          Thưởng thức tinh hoa ẩm thực được sắp xếp tinh tế theo danh mục. Chọn món yêu thích bằng nút (+) và hoàn tất đơn hàng dễ dàng ngay trên thanh điều hướng bên dưới
-        </p>
-      </header>
+      {loading ? (
+        <div style={{ textAlign: 'center', color: '#94a3b8', marginTop: '80px' }}>Đang tải thực đơn...</div>
+      ) : (
+        <div style={sectionStyles.pageContainer}>
+          <section style={sectionStyles.mainContent}>
+            <header style={sectionStyles.header}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <button
+                  onClick={() => navigate(-1)}
+                  style={{
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
+                    color: '#fff',
+                    padding: '10px 14px',
+                    borderRadius: '12px',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    transition: 'var(--transition)',
+                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
+                  }}
+                  title="Quay lại"
+                  onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.05)', boxShadow: '0 6px 16px rgba(239, 68, 68, 0.4)' })}
+                  onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' })}
+                >
+                  ← Quay lại
+                </button>
+                
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <button onClick={toggleTheme} className="theme-toggle-btn">
+                    {isDark ? '☀️ Light' : '🌙 Dark'}
+                  </button>
+                </div>
+              </div>
+            </header>
 
       <section style={sectionStyles.tabs}>
         {/* Tab Tất cả - luôn ở đầu tiên */}
@@ -534,7 +533,7 @@ export default function TableMenu() {
       </section>
 
       {/* Search Bar */}
-      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
         <input
           type="text"
           placeholder="Tìm kiếm món ăn..."
@@ -546,11 +545,6 @@ export default function TableMenu() {
         />
       </div>
 
-      {loading ? (
-        <div style={{ textAlign: 'center', color: '#94a3b8', marginTop: '80px' }}>Đang tải thực đơn...</div>
-      ) : (
-        <div style={sectionStyles.pageContainer}>
-          <section style={sectionStyles.mainContent}>
             {activeCategory ? (
               <div style={{ display: 'grid', gap: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
@@ -643,9 +637,20 @@ export default function TableMenu() {
           {/* Sidebar giỏ hàng */}
           <div style={sectionStyles.stickyFooter}>
             <div style={{ ...sectionStyles.footerCard, background: footerBg, border: `1.5px solid ${cardBorderColor}` }}>
+              {/* Tiêu đề Bàn bên phải */}
+              <div style={{ paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}`, marginBottom: '8px' }}>
+                <p style={{ margin: 0, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.75rem' }}>
+                  Gọi món nhanh
+                </p>
+                <h1 style={{ ...sectionStyles.title, fontSize: '1.6rem', marginBottom: '4px' }}>{tableName}</h1>
+                <p style={{ ...sectionStyles.subtitle, fontSize: '0.8rem', color: textMuted, marginTop: '4px' }}>
+                  Thưởng thức tinh hoa ẩm thực được sắp xếp tinh tế. Bấm (+) để thêm món.
+                </p>
+              </div>
+
               {/* Giỏ hàng chi tiết */}
               {cart.length > 0 && (
-                <div style={{ maxHeight: '280px', overflowY: 'auto', marginBottom: '12px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}` }}>
+                <div style={{ flex: 1, overflowY: 'auto', marginBottom: '12px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}` }}>
                   {cart.map((entry) => (
                     <div
                       key={entry.menuItem.id}
@@ -657,6 +662,11 @@ export default function TableMenu() {
                         gap: '12px'
                       }}
                     >
+                      <img
+                        src={entry.menuItem.image || placeholderImage}
+                        alt={entry.menuItem.name}
+                        style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0, border: '1px solid rgba(148, 163, 184, 0.2)' }}
+                      />
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <p style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 600, color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {entry.menuItem.name}
@@ -722,14 +732,14 @@ export default function TableMenu() {
               )}
 
               {/* Thông tin tổng cộng */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '12px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}` }}>
+              <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}`, textAlign: 'right' }}>
                 <div>
-                  <p style={sectionStyles.footerLabel}>Tổng số món</p>
-                  <p style={{ ...sectionStyles.footerTotal, fontSize: '1.8rem' }}>{cartItemCount}</p>
+                  <p style={{ ...sectionStyles.footerLabel, fontSize: '0.7rem' }}>Tổng số món</p>
+                  <p style={{ ...sectionStyles.footerTotal, fontSize: '1.1rem' }}>{cartItemCount}</p>
                 </div>
                 <div>
-                  <p style={sectionStyles.footerLabel}>Tổng giá</p>
-                  <p style={{ ...sectionStyles.footerTotal, fontSize: '1.8rem' }}>{formatCurrency(cartTotal)}</p>
+                  <p style={{ ...sectionStyles.footerLabel, fontSize: '0.7rem' }}>Tổng giá</p>
+                  <p style={{ ...sectionStyles.footerTotal, fontSize: '1.1rem' }}>{formatCurrency(cartTotal)}</p>
                 </div>
               </div>
 

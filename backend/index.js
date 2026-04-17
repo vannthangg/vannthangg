@@ -142,6 +142,35 @@ app.post('/api/order', async (req, res) => {
 
 // === API CHO ADMIN ===
 
+// Lấy danh sách đơn hàng đang chờ
+app.get('/api/admin/orders/pending', async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where: { status: { in: ['Pending', 'Processing'] } },
+      include: { table: true, items: { include: { menuItem: true } } },
+      orderBy: { createdAt: 'asc' }
+    });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Cập nhật trạng thái đơn (Served)
+app.patch('/api/admin/order/:id/status', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    const order = await prisma.order.update({
+      where: { id: Number(id) },
+      data: { status }
+    });
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 1. Lấy danh sách menu items
 app.get('/api/admin/menu', async (req, res) => {
   try {
@@ -346,7 +375,7 @@ app.get('/api/admin/revenue/daily', async (req, res) => {
     
     const paidOrders = await prisma.order.findMany({
       where: { 
-        status: { equals: 'Paid', mode: 'insensitive' },
+        status: 'Paid',
         createdAt: { gte: startOfToday }
       }
     });
