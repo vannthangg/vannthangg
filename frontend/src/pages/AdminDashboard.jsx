@@ -112,90 +112,95 @@ export default function AdminDashboard({ onLogout }) {
 
   const tabsContainerStyle = {
     display: 'flex',
-    gap: '12px',
-    marginBottom: '32px',
-    borderBottom: '2px solid #334155',
-    paddingBottom: '0'
+    gap: '8px',
+    marginBottom: '28px',
+    borderBottom: '2px solid #e5e5e5',
+    paddingBottom: '0',
+    overflowX: 'auto'
   };
 
   const tabButtonStyle = (isActive) => ({
-    padding: '12px 24px',
+    padding: '10px 20px',
     background: 'none',
     border: 'none',
-    borderBottom: isActive ? '3px solid #8b5cf6' : '3px solid transparent',
-    color: isActive ? '#60a5fa' : '#94a3b8',
+    borderBottom: isActive ? '3px solid #2563eb' : '3px solid transparent',
+    color: isActive ? '#2563eb' : '#999',
     cursor: 'pointer',
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     fontWeight: isActive ? '700' : '600',
     transition: 'all 0.2s',
-    marginBottom: '-2px'
+    marginBottom: '-2px',
+    whiteSpace: 'nowrap'
   });
 
   // --- GIAO DIỆN TRANG CHỦ (THỐNG KÊ + BẢNG NHÂN VIÊN) ---
-  const StatCard = ({ label, value, icon, color = '#8b5cf6' }) => (
+  const StatCard = ({ label, value, icon, color = '#2563eb' }) => (
     <div style={{
-      background: `linear-gradient(135deg, ${color}20 0%, ${color}05 100%)`,
-      border: `2px solid ${color}40`,
-      padding: '28px 24px',
-      borderRadius: '20px',
+      background: '#fff',
+      border: `2px solid ${color}20`,
+      padding: '24px 20px',
+      borderRadius: '12px',
       transition: 'all 0.3s ease',
       cursor: 'pointer',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
     }}
     onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'translateY(-8px)';
-      e.currentTarget.style.boxShadow = `0 20px 40px ${color}40`;
+      e.currentTarget.style.transform = 'translateY(-4px)';
+      e.currentTarget.style.boxShadow = `0 8px 16px ${color}20`;
+      e.currentTarget.style.borderColor = `${color}40`;
     }}
     onMouseLeave={(e) => {
       e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = 'none';
+      e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+      e.currentTarget.style.borderColor = `${color}20`;
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
-          <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.9rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</p>
-          <p style={{ color: '#fff', fontSize: '2.5rem', fontWeight: '800', margin: '12px 0 0' }}>{loading ? 'Đang tải' : value}</p>
+          <p style={{ color: '#999', margin: 0, fontSize: '0.85rem', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.04em' }}>{label}</p>
+          <p style={{ color: '#0f0e2e', fontSize: '2.3rem', fontWeight: '800', margin: '10px 0 0' }}>{loading ? 'Đang tải' : value}</p>
         </div>
-        <span style={{ fontSize: '2.5rem' }}>{icon}</span>
+        <span style={{ fontSize: '2.2rem' }}>{icon}</span>
       </div>
     </div>
   );
 
   const renderDashboard = () => (
     <>
-      <header style={{ marginBottom: '40px' }}>
-        <h1 style={{ margin: 0, fontSize: '2.8rem', fontWeight: '900', color: '#fff', background: 'linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Tổng quan Hệ thống</h1>
-        <p style={{ margin: '12px 0 0', color: '#cbd5e1', fontSize: '1.1rem' }}>Giám sát doanh thu, bàn hoạt động và nhân sự</p>
+      <header style={{ marginBottom: '36px' }}>
+        <h1 style={{ margin: 0, fontSize: '2.6rem', fontWeight: '900', color: '#0f0e2e' }}>Tổng quan Hệ thống</h1>
+        <p style={{ margin: '10px 0 0', color: '#666', fontSize: '1.05rem' }}>Giám sát doanh thu, bàn hoạt động và nhân sự</p>
       </header>
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '40px' }}>
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px', marginBottom: '36px' }}>
         <StatCard label="Doanh thu hôm nay" value={formatCurrency(dailyRevenue ?? 0)} icon="" color="#10b981" />
         <StatCard label="Bàn hoạt động" value={activeTables} icon="" color="#f59e0b" />
-        <StatCard label="Nhân viên" value={employees.length} icon="" color="#3b82f6" />
-        <StatCard label="Đơn chờ" value={recentOrders.length} icon="" color="#ec4899" />
+        <StatCard label="Nhân viên" value={employees.length} icon="" color="#2563eb" />
+        <StatCard label="Đơn chờ" value={recentOrders.length} icon="" color="#06b6d4" />
       </section>
 
       {/* Biểu đồ */}
-      <section style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', padding: '32px', borderRadius: '24px', marginBottom: '32px', border: '2px solid #334155', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-          <h2 style={{ color: '#fff', margin: 0, fontSize: '1.5rem', fontWeight: '800' }}>Doanh thu 7 ngày</h2>
-          <span style={{ background: '#10b98140', color: '#10b981', padding: '8px 16px', borderRadius: '12px', fontSize: '0.9rem', fontWeight: '600' }}>↑ Xu hướng tăng</span>
+      <section style={{ background: '#fff', padding: '28px', borderRadius: '12px', marginBottom: '28px', border: '1px solid #e5e5e5', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h2 style={{ color: '#0f0e2e', margin: 0, fontSize: '1.4rem', fontWeight: '800' }}>Doanh thu 7 ngày</h2>
+          <span style={{ background: '#10b98110', color: '#10b981', padding: '6px 14px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: '600' }}>↑ Xu hướng tăng</span>
         </div>
-        <div style={{ width: '100%', height: '350px' }}>
+        <div style={{ width: '100%', height: '320px' }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={summaryData}>
-              <CartesianGrid stroke="#334155" vertical={false} strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fill: '#94a3b8', fontSize: 12 }} />
-              <YAxis tickFormatter={(val) => `${val / 1000}k`} tick={{ fill: '#94a3b8', fontSize: 12 }} />
+              <CartesianGrid stroke="#e5e5e5" vertical={false} strokeDasharray="3 3" />
+              <XAxis dataKey="date" tick={{ fill: '#999', fontSize: 12 }} />
+              <YAxis tickFormatter={(val) => `${val / 1000}k`} tick={{ fill: '#999', fontSize: 12 }} />
               <Tooltip 
                 formatter={(val) => formatCurrency(val)} 
-                contentStyle={{ backgroundColor: '#0f172a', border: '2px solid #8b5cf6', borderRadius: '12px', color: '#fff' }}
-                labelStyle={{ color: '#94a3b8' }}
+                contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px', color: '#0f0e2e' }}
+                labelStyle={{ color: '#666' }}
               />
-              <Bar dataKey="totalRevenue" fill="url(#colorGradient)" radius={[10, 10, 0, 0]} />
+              <Bar dataKey="totalRevenue" fill="url(#colorGradient)" radius={[8, 8, 0, 0]} />
               <defs>
                 <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.8}/>
-                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.2}/>
+                  <stop offset="0%" stopColor="#2563eb" stopOpacity={0.8}/>
+                  <stop offset="100%" stopColor="#2563eb" stopOpacity={0.2}/>
                 </linearGradient>
               </defs>
             </BarChart>
@@ -205,31 +210,33 @@ export default function AdminDashboard({ onLogout }) {
 
       {/* Đơn hàng gần đây */}
       {recentOrders.length > 0 && (
-        <section style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', padding: '32px', borderRadius: '24px', marginBottom: '32px', border: '2px solid #334155', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
-          <h2 style={{ color: '#fff', margin: '0 0 24px 0', fontSize: '1.5rem', fontWeight: '800' }}>Đơn hàng gần đây</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '16px' }}>
+        <section style={{ background: '#fff', padding: '28px', borderRadius: '12px', marginBottom: '28px', border: '1px solid #e5e5e5', boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+          <h2 style={{ color: '#0f0e2e', margin: '0 0 20px 0', fontSize: '1.4rem', fontWeight: '800' }}>Đơn hàng gần đây</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: '12px' }}>
             {recentOrders.map((order, idx) => (
               <div key={idx} style={{
-                background: 'rgba(139, 92, 246, 0.1)',
-                border: '2px solid rgba(139, 92, 246, 0.3)',
-                padding: '20px',
-                borderRadius: '16px',
+                background: '#f5f5f5',
+                border: '1px solid #e5e5e5',
+                padding: '18px',
+                borderRadius: '8px',
                 transition: 'all 0.3s ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(139, 92, 246, 0.15)';
-                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.background = '#fff';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.borderColor = '#2563eb';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(139, 92, 246, 0.1)';
+                e.currentTarget.style.background = '#f5f5f5';
                 e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.borderColor = '#e5e5e5';
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '1.2rem', fontWeight: '700', color: '#e0e7ff' }}>Bàn {order.tableId}</span>
-                  <span style={{ background: '#f97316', color: '#000', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '700' }}>Chờ</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <span style={{ fontSize: '1.1rem', fontWeight: '700', color: '#0f0e2e' }}>Bàn {order.tableId}</span>
+                  <span style={{ background: '#f59e0b', color: '#fff', padding: '3px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '700' }}>Chờ</span>
                 </div>
-                <p style={{ color: '#cbd5e1', margin: 0, fontSize: '0.9rem' }}>{order.items?.length || 0} món</p>
-                <p style={{ color: '#10b981', margin: '12px 0 0', fontSize: '1.2rem', fontWeight: '700' }}>{formatCurrency(order.totalAmount || 0)}</p>
+                <p style={{ color: '#666', margin: 0, fontSize: '0.85rem' }}>{order.items?.length || 0} món</p>
+                <p style={{ color: '#10b981', margin: '10px 0 0', fontSize: '1.1rem', fontWeight: '700' }}>{formatCurrency(order.totalAmount || 0)}</p>
               </div>
             ))}
           </div>
@@ -241,59 +248,59 @@ export default function AdminDashboard({ onLogout }) {
   // Render Inventory Management
   const renderInventory = () => (
     <>
-      <header style={{ marginBottom: '40px' }}>
-        <h1 style={{ margin: 0, fontSize: '2.8rem', fontWeight: '900', color: '#fff', background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)', backgroundClip: 'text', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Quản lý Kho hàng</h1>
-        <p style={{ margin: '12px 0 0', color: '#cbd5e1', fontSize: '1.1rem' }}>Theo dõi và cập nhật trạng thái hàng hóa trong thực đơn</p>
+      <header style={{ marginBottom: '36px' }}>
+        <h1 style={{ margin: 0, fontSize: '2.6rem', fontWeight: '900', color: '#0f0e2e' }}>Quản lý Kho hàng</h1>
+        <p style={{ margin: '10px 0 0', color: '#666', fontSize: '1.05rem' }}>Theo dõi và cập nhật trạng thái hàng hóa trong thực đơn</p>
       </header>
 
       {error && (
-        <div style={{ background: '#ef4444', color: '#fff', padding: '16px', borderRadius: '12px', marginBottom: '24px' }}>
+        <div style={{ background: '#ef4444', color: '#fff', padding: '14px', borderRadius: '10px', marginBottom: '20px', fontSize: '0.95rem' }}>
           {error}
         </div>
       )}
 
       {inventoryLoading ? (
-        <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-          <p style={{ color: '#94a3b8', fontSize: '1.2rem' }}>Đang tải...</p>
+        <div style={{ textAlign: 'center', padding: '50px 20px' }}>
+          <p style={{ color: '#94a3b8', fontSize: '1.1rem' }}>Đang tải...</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
           {menuItems.map((item) => (
             <div
               key={item.id}
               style={{
                 background: item.isAvailable
-                  ? 'linear-gradient(135deg, #10b98120 0%, #06b6d420 100%)'
-                  : 'linear-gradient(135deg, #ef444420 0%, #f9731620 100%)',
+                  ? 'linear-gradient(135deg, #10b98115 0%, #06b6d408 100%)'
+                  : 'linear-gradient(135deg, #ef444415 0%, #f9731615 100%)',
                 border: item.isAvailable
-                  ? '2px solid #10b981'
-                  : '2px solid #ef4444',
-                padding: '24px',
-                borderRadius: '16px',
+                  ? '1.5px solid #10b98140'
+                  : '1.5px solid #ef444440',
+                padding: '20px',
+                borderRadius: '12px',
                 transition: 'all 0.3s ease',
                 boxShadow: item.isAvailable
                   ? 'none'
-                  : '0 0 20px rgba(239, 68, 68, 0.3)'
+                  : '0 0 16px rgba(239, 68, 68, 0.2)'
               }}
               onMouseEnter={(e) => {
                 if (item.isAvailable) {
-                  e.currentTarget.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.3)';
-                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 0 16px rgba(16, 185, 129, 0.2)';
+                  e.currentTarget.style.transform = 'translateY(-3px)';
                 }
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = item.isAvailable
                   ? 'none'
-                  : '0 0 20px rgba(239, 68, 68, 0.3)';
+                  : '0 0 16px rgba(239, 68, 68, 0.2)';
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
               {/* Header với tên món */}
-              <div style={{ marginBottom: '16px' }}>
-                <h3 style={{ margin: '0 0 8px 0', color: '#fff', fontSize: '1.1rem', fontWeight: '700' }}>
+              <div style={{ marginBottom: '14px' }}>
+                <h3 style={{ margin: '0 0 6px 0', color: '#0f0e2e', fontSize: '1rem', fontWeight: '700' }}>
                   {item.name}
                 </h3>
-                <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.9rem' }}>
+                <p style={{ margin: 0, color: '#666', fontSize: '0.85rem' }}>
                   {item.price?.toLocaleString('vi-VN') || 0}đ
                 </p>
               </div>
@@ -303,16 +310,16 @@ export default function AdminDashboard({ onLogout }) {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: '16px'
+                marginBottom: '12px'
               }}>
                 <span style={{
                   background: item.isAvailable
-                    ? '#10b98140'
-                    : '#ef444440',
+                    ? '#10b98110'
+                    : '#ef444410',
                   color: item.isAvailable ? '#10b981' : '#ef4444',
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  fontSize: '0.85rem',
+                  padding: '4px 10px',
+                  borderRadius: '6px',
+                  fontSize: '0.8rem',
                   fontWeight: '600'
                 }}>
                   {item.isAvailable ? 'Còn hàng' : 'Hết hàng'}
@@ -325,18 +332,18 @@ export default function AdminDashboard({ onLogout }) {
                 disabled={actionLoading === item.id}
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
-                  borderRadius: '10px',
+                  padding: '10px 12px',
+                  borderRadius: '6px',
                   border: 'none',
                   background: item.isAvailable
-                    ? 'linear-gradient(135deg, #ef4444 0%, #f97316 100%)'
-                    : 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
+                    ? '#ef4444'
+                    : '#10b981',
                   color: '#fff',
                   fontWeight: '600',
-                  fontSize: '0.95rem',
+                  fontSize: '0.9rem',
                   cursor: actionLoading === item.id ? 'not-allowed' : 'pointer',
                   opacity: actionLoading === item.id ? 0.7 : 1,
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.2s'
                 }}
               >
                 {actionLoading === item.id ? (
@@ -353,8 +360,8 @@ export default function AdminDashboard({ onLogout }) {
       )}
 
       {!inventoryLoading && menuItems.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '60px 20px', color: '#94a3b8' }}>
-          <p style={{ fontSize: '1.1rem' }}>Không có mục nào trong thực đơn</p>
+        <div style={{ textAlign: 'center', padding: '50px 20px', color: '#999' }}>
+          <p style={{ fontSize: '1.05rem' }}>Không có mục nào trong thực đơn</p>
         </div>
       )}
     </>
@@ -393,7 +400,7 @@ export default function AdminDashboard({ onLogout }) {
       {activeTab === 'inventory' && renderInventory()}
       {activeTab === 'employee' && (
         <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-          <h2 style={{ color: '#fff', marginBottom: '20px' }}>Tạo tài khoản Nhân viên</h2>
+          <h2 style={{ color: '#0f0e2e', marginBottom: '20px' }}>Tạo tài khoản Nhân viên</h2>
           <EmployeeManager />
         </div>
       )}

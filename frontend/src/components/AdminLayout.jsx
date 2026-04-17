@@ -1,11 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '../ThemeContext';
+import { LogOut, ShoppingCart } from 'lucide-react';
 
 export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
-
-  const isDark = theme === 'dark';
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -16,56 +13,103 @@ export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
   return (
     <div style={{
       minHeight: '100vh',
-      backgroundColor: isDark ? '#0f172a' : '#f0f4ff',
-      color: isDark ? '#fff' : '#0f172a',
-      fontFamily: 'system-ui, sans-serif',
-      padding: '20px',
-      transition: 'background-color 0.3s ease, color 0.3s ease'
+      background: '#f5f5f5',
+      color: '#0f0e2e',
+      fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
     }}>
-      {/* HEADER */}
+      {/* MODERN HEADER */}
       <div style={{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        marginBottom: '24px',
-        maxWidth: '1400px',
-        margin: '0 auto 24px',
-        gap: '12px'
+        background: '#fff',
+        borderBottom: '1px solid #e5e5e5',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        transition: 'all 0.3s'
       }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0, flex: 1 }}>{title}</h1>
+        <div style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          padding: '12px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          {/* Logo & Title */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            flex: 1
+          }}>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontSize: '1.3rem',
+              fontWeight: 800
+            }}>
+              <ShoppingCart size={24} />
+            </div>
+            <div>
+              <h1 style={{ 
+                fontSize: '1.3rem', 
+                fontWeight: 700, 
+                margin: 0,
+                color: '#0f0e2e'
+              }}>
+                {title}
+              </h1>
+              <p style={{ fontSize: '0.75rem', color: '#999', margin: '2px 0 0' }}>
+                Quản lý nhà hàng
+              </p>
+            </div>
+          </div>
 
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className="theme-toggle-btn"
-          title={isDark ? 'Chuyển sang Light Mode' : 'Chuyển sang Dark Mode'}
-        >
-          {isDark ? '☀️ Light' : '🌙 Dark'}
-        </button>
-
-        {/* Logout */}
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: '10px 16px',
-            background: '#ef4444',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '0.95rem',
-            fontWeight: '600',
-            transition: 'all 0.2s'
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.background = '#dc2626'}
-          onMouseLeave={(e) => e.currentTarget.style.background = '#ef4444'}
-        >
-          Đăng xuất
-        </button>
+          {/* Right Actions */}
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center'
+          }}>
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: '8px 16px',
+                background: '#ef4444',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#dc2626'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#ef4444'}
+            >
+              <LogOut size={18} />
+              Đăng xuất
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* CONTENT */}
-      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+      <div style={{ 
+        maxWidth: '1400px', 
+        margin: '0 auto',
+        padding: '24px 20px'
+      }}>
         {children}
       </div>
     </div>

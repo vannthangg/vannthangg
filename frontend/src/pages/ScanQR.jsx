@@ -5,16 +5,14 @@ import axios from 'axios';
 const styles = {
   container: {
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1135 100%)',
-    backgroundAttachment: 'fixed',
-    color: '#f8fafc',
+    background: '#f5f5f5',
+    color: '#0f0e2e',
     padding: '40px 20px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '40px',
-    minHeight: '100vh'
+    gap: '40px'
   },
   header: {
     textAlign: 'center',
@@ -25,14 +23,11 @@ const styles = {
     margin: 0,
     marginBottom: '12px',
     fontWeight: 800,
-    background: 'linear-gradient(135deg, #60a5fa 0%, #8b5cf6 100%)',
-    backgroundClip: 'text',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
+    color: '#0f0e2e',
     lineHeight: 1.2
   },
   subtitle: {
-    color: '#94a3b8',
+    color: '#666',
     margin: 0,
     fontSize: '1.1rem',
     fontWeight: 500
@@ -46,56 +41,56 @@ const styles = {
   },
   tableButton: {
     padding: '32px 16px',
-    background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(26, 31, 58, 0.8) 100%)',
-    color: '#f8fafc',
-    border: '1.5px solid rgba(148, 163, 184, 0.12)',
-    borderRadius: '16px',
+    background: '#fff',
+    color: '#0f0e2e',
+    border: '2px solid #e5e5e5',
+    borderRadius: '12px',
     cursor: 'pointer',
     fontSize: '1.1rem',
     fontWeight: 700,
-    transition: 'var(--transition)',
-    backdropFilter: 'blur(8px)',
+    transition: 'all 0.2s',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    textAlign: 'center'
+    textAlign: 'center',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.08)'
   },
   tableButtonHover: {
-    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
-    borderColor: 'rgba(59, 130, 246, 0.4)',
-    transform: 'translateY(-8px)',
-    boxShadow: '0 12px 32px rgba(59, 130, 246, 0.15)'
+    background: '#fff',
+    borderColor: '#2563eb',
+    transform: 'translateY(-4px)',
+    boxShadow: '0 8px 16px rgba(37, 99, 235, 0.15)'
   },
   loading: {
     textAlign: 'center',
-    color: '#94a3b8',
+    color: '#999',
     gridColumn: '1/-1',
     padding: '40px',
     fontSize: '1rem'
   },
   error: {
     textAlign: 'center',
-    color: '#fca5a5',
+    color: '#dc2626',
     gridColumn: '1/-1',
     padding: '40px',
     fontSize: '1rem'
   },
   backButton: {
     padding: '14px 32px',
-    background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
     color: '#fff',
     border: 'none',
-    borderRadius: '12px',
+    borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '1rem',
     fontWeight: 700,
     marginTop: '24px',
-    transition: 'var(--transition)',
-    boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
+    transition: 'all 0.2s',
+    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.2)'
   },
   backButtonHover: {
     transform: 'translateY(-2px)',
-    boxShadow: '0 8px 25px rgba(59, 130, 246, 0.4)'
+    boxShadow: '0 6px 16px rgba(37, 99, 235, 0.3)'
   }
 };
 
@@ -162,7 +157,7 @@ export default function ScanQR() {
         onMouseEnter={(e) => Object.assign(e.currentTarget.style, styles.backButtonHover)}
         onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'translateY(0)', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)' })}
       >
-        ← Quay lại trang chủ
+        Quay lại trang chủ
       </button>
     </div>
   );

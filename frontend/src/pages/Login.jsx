@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import { useTheme } from '../ThemeContext';
 
 const styles = {
   container: {
@@ -9,138 +8,106 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '24px',
-    background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1135 100%)',
-    backgroundAttachment: 'fixed',
-    position: 'relative'
+    padding: '20px',
+    background: '#f5f5f5'
   },
   card: {
     width: '100%',
-    maxWidth: '450px',
-    background: 'rgba(26, 31, 58, 0.8)',
-    border: '1px solid rgba(148, 163, 184, 0.12)',
-    borderRadius: '24px',
-    padding: '48px 32px',
-    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
-    backdropFilter: 'blur(12px)',
+    maxWidth: '420px',
+    background: '#fff',
+    border: '1px solid #e5e5e5',
+    borderRadius: '12px',
+    padding: '40px 32px',
+    boxShadow: '0 2px 12px rgba(0, 0, 0, 0.08)',
     animation: 'slideInUp 0.6s ease-out'
   },
   header: {
     textAlign: 'center',
-    marginBottom: '40px'
+    marginBottom: '32px'
   },
   icon: {
     fontSize: '3rem',
-    marginBottom: '16px'
+    marginBottom: '12px'
   },
   title: {
-    fontSize: '1.875rem',
+    fontSize: '1.7rem',
     fontWeight: 800,
-    color: '#f8fafc',
-    marginBottom: '8px',
-    background: 'linear-gradient(135deg, #60a5fa 0%, #8b5cf6 100%)',
-    backgroundClip: 'text',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    color: '#0f0e2e',
+    marginBottom: '4px'
   },
   subtitle: {
-    fontSize: '0.95rem',
-    color: '#94a3b8',
+    fontSize: '0.9rem',
+    color: '#666',
     fontWeight: 500
   },
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '18px'
+    gap: '16px'
   },
   inputGroup: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px'
+    gap: '6px'
   },
   label: {
-    fontSize: '0.875rem',
+    fontSize: '0.85rem',
     fontWeight: 600,
-    color: '#cbd5e1',
+    color: '#333',
     textTransform: 'uppercase',
-    letterSpacing: '0.05em'
+    letterSpacing: '0.03em'
   },
   input: {
-    background: 'rgba(15, 23, 42, 0.8)',
-    color: '#f8fafc',
-    border: '1.5px solid rgba(148, 163, 184, 0.12)',
-    padding: '14px 16px',
-    borderRadius: '12px',
+    background: '#fff',
+    color: '#0f0e2e',
+    border: '1.5px solid #e5e5e5',
+    padding: '11px 14px',
+    borderRadius: '8px',
     fontFamily: 'inherit',
     fontSize: '0.95rem',
-    transition: 'var(--transition)',
-    backdropFilter: 'blur(4px)'
+    transition: 'all 0.2s'
   },
   inputFocus: {
-    borderColor: 'rgba(59, 130, 246, 0.4)',
-    boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-    background: 'rgba(15, 23, 42, 0.95)'
+    borderColor: '#2563eb',
+    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.08)',
+    background: '#fff'
   },
   button: {
-    background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
     color: '#fff',
-    padding: '14px 28px',
+    padding: '11px 26px',
     border: 'none',
-    borderRadius: '12px',
+    borderRadius: '8px',
     fontWeight: 700,
     fontSize: '0.95rem',
-    marginTop: '12px',
+    marginTop: '8px',
     cursor: 'pointer',
-    transition: 'var(--transition)',
-    boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
+    transition: 'all 0.2s',
+    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.2)'
   },
   error: {
     background: 'rgba(239, 68, 68, 0.1)',
-    color: '#fca5a5',
-    padding: '12px 16px',
-    borderRadius: '12px',
-    fontSize: '0.9rem',
-    border: '1px solid rgba(239, 68, 68, 0.2)',
-    marginTop: '8px'
+    color: '#dc2626',
+    padding: '10px 14px',
+    borderRadius: '8px',
+    fontSize: '0.85rem',
+    border: '1px solid rgba(239, 68, 68, 0.25)',
+    marginTop: '6px'
   },
   backLink: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '6px',
-    color: '#60a5fa',
+    color: '#2563eb',
     textDecoration: 'none',
-    fontSize: '0.9rem',
+    fontSize: '0.85rem',
     fontWeight: 600,
-    marginTop: '24px',
-    transition: 'var(--transition)'
+    marginTop: '20px',
+    transition: 'all 0.2s'
   }
 };
 
 export default function Login({onLogin}) {
-  const { theme, toggleTheme } = useTheme();
-  const isDark = theme === 'dark';
-
-  const themeStyles = {
-    container: {
-      ...styles.container,
-      background: isDark
-        ? 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1135 100%)'
-        : 'linear-gradient(135deg, #e8edf8 0%, #f0f4ff 50%, #dde8ff 100%)'
-    },
-    card: {
-      ...styles.card,
-      background: isDark ? 'rgba(26, 31, 58, 0.8)' : 'rgba(255, 255, 255, 0.95)',
-      border: isDark ? '1px solid rgba(148, 163, 184, 0.12)' : '1px solid rgba(15,23,42,0.1)'
-    },
-    label: { ...styles.label, color: isDark ? '#cbd5e1' : '#475569' },
-    input: {
-      ...styles.input,
-      background: isDark ? 'rgba(15, 23, 42, 0.8)' : '#f8fafc',
-      color: isDark ? '#f8fafc' : '#0f172a',
-      border: isDark ? '1.5px solid rgba(148, 163, 184, 0.12)' : '1.5px solid #e2e8f0'
-    }
-  };
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -174,32 +141,22 @@ export default function Login({onLogin}) {
   };
 
   const handleInputBlur = (e) => {
-    e.target.style.borderColor = 'rgba(148, 163, 184, 0.12)';
+    e.target.style.borderColor = '#e5e5e5';
     e.target.style.boxShadow = 'none';
-    e.target.style.background = 'rgba(15, 23, 42, 0.8)';
+    e.target.style.background = '#fff';
   };
 
   return (
-    <div style={themeStyles.container}>
-      {/* Theme toggle nổi */}
-      <button
-        onClick={toggleTheme}
-        className="theme-toggle-btn"
-        style={{ position: 'fixed', top: '20px', right: '20px', zIndex: 100 }}
-      >
-        {isDark ? '☀️ Light' : '🌙 Dark'}
-      </button>
-
-      <div style={themeStyles.card}>
+    <div style={styles.container}>
+      <div style={styles.card}>
         <div style={styles.header}>
-          
           <h1 style={styles.title}>Đăng nhập</h1>
           <p style={styles.subtitle}>ORDER FOOD</p>
         </div>
 
         <form style={styles.form} onSubmit={handleLogin}>
           <div style={styles.inputGroup}>
-            <label style={themeStyles.label}>Tên đăng nhập</label>
+            <label style={styles.label}>Tên đăng nhập</label>
             <input
               type="text"
               placeholder="Nhập tên tài khoản"
@@ -208,12 +165,12 @@ export default function Login({onLogin}) {
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
               required
-              style={themeStyles.input}
+              style={styles.input}
             />
           </div>
 
           <div style={styles.inputGroup}>
-            <label style={themeStyles.label}>Mật khẩu</label>
+            <label style={styles.label}>Mật khẩu</label>
             <input
               type="password"
               placeholder="Nhập mật khẩu"
@@ -222,7 +179,7 @@ export default function Login({onLogin}) {
               onFocus={handleInputFocus}
               onBlur={handleInputBlur}
               required
-              style={themeStyles.input}
+              style={styles.input}
             />
           </div>
 
@@ -234,7 +191,7 @@ export default function Login({onLogin}) {
         </form>
 
         <Link to="/" style={styles.backLink}>
-          ← Quay lại trang chủ
+          Quay lại trang chủ
         </Link>
       </div>
     </div>

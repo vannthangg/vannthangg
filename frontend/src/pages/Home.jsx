@@ -1,198 +1,312 @@
 import { Link } from 'react-router-dom';
+import { ShoppingCart, Zap, Clock, Star } from 'lucide-react';
 
 const styles = {
-  container: {
+  page: {
     minHeight: '100vh',
+    background: '#f5f5f5',
+    paddingTop: 0,
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif",
+    lineHeight: 1.5
+  },
+  header: {
+    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    color: '#fff',
+    padding: '16px 20px',
+    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.15)',
+    position: 'sticky',
+    top: 0,
+    zIndex: 50
+  },
+  headerContent: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  logo: {
+    fontSize: '1.5rem',
+    fontWeight: 800,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: '24px',
-    background: 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1135 100%)',
-    backgroundAttachment: 'fixed',
-    position: 'relative',
-    overflow: 'hidden'
-  },
-  decorativeBlob1: {
-    position: 'absolute',
-    width: '600px',
-    height: '600px',
-    background: 'radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%)',
-    borderRadius: '50%',
-    top: '-300px',
-    left: '-300px',
-    filter: 'blur(40px)',
-    pointerEvents: 'none'
-  },
-  decorativeBlob2: {
-    position: 'absolute',
-    width: '500px',
-    height: '500px',
-    background: 'radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%)',
-    borderRadius: '50%',
-    bottom: '-250px',
-    right: '-250px',
-    filter: 'blur(40px)',
-    pointerEvents: 'none'
-  },
-  content: {
-    position: 'relative',
-    zIndex: 10,
-    textAlign: 'center',
-    maxWidth: '700px',
-    animation: 'fadeIn 0.8s ease-out'
-  },
-  title: {
-    fontSize: 'clamp(2.5rem, 8vw, 4rem)',
-    fontWeight: 900,
-    lineHeight: 1.1,
-    marginBottom: '16px',
-    background: 'linear-gradient(135deg, #60a5fa 0%, #8b5cf6 50%, #ec4899 100%)',
-    backgroundClip: 'text',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
+    gap: '8px',
     letterSpacing: '-0.02em'
   },
-  subtitle: {
-    fontSize: '1.25rem',
-    color: '#cbd5e1',
-    marginBottom: '48px',
-    lineHeight: 1.6,
-    fontWeight: 500
-  },
-  buttonGroup: {
+  headerLinks: {
     display: 'flex',
-    flexDirection: 'column',
     gap: '16px',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '48px'
+    alignItems: 'center'
   },
-  buttonPrimary: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '12px',
-    padding: '16px 40px',
-    background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+  headerLink: {
     color: '#fff',
     textDecoration: 'none',
-    borderRadius: '16px',
-    fontSize: '1.1rem',
-    fontWeight: 700,
-    boxShadow: '0 8px 32px rgba(59, 130, 246, 0.4)',
-    transition: 'var(--transition)',
+    fontSize: '0.95rem',
+    fontWeight: 600,
+    padding: '8px 16px',
+    borderRadius: '6px',
+    transition: 'all 0.3s',
+    background: 'rgba(255,255,255,0.1)',
     border: 'none',
     cursor: 'pointer',
-    minWidth: '280px'
+    letterSpacing: '0.01em'
   },
-  buttonPrimaryHover: {
-    transform: 'translateY(-4px)',
-    boxShadow: '0 16px 48px rgba(59, 130, 246, 0.5)'
-  },
-  buttonSecondary: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '12px',
-    padding: '16px 40px',
-    background: 'rgba(30, 41, 59, 0.8)',
-    border: '2px solid rgba(59, 130, 246, 0.3)',
-    color: '#60a5fa',
-    textDecoration: 'none',
-    borderRadius: '16px',
-    fontSize: '1.1rem',
-    fontWeight: 700,
-    transition: 'var(--transition)',
-    backdropFilter: 'blur(8px)',
-    cursor: 'pointer',
-    minWidth: '280px'
-  },
-  buttonSecondaryHover: {
-    background: 'rgba(59, 130, 246, 0.1)',
-    borderColor: 'rgba(59, 130, 246, 0.6)',
-    transform: 'translateY(-4px)'
-  },
-  stats: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: '24px',
-    marginTop: '64px',
-    padding: '32px',
-    background: 'rgba(26, 31, 58, 0.5)',
-    border: '1px solid rgba(148, 163, 184, 0.1)',
-    borderRadius: '20px',
-    backdropFilter: 'blur(12px)'
-  },
-  statItem: {
+  hero: {
+    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    color: '#fff',
+    padding: '48px 20px',
     textAlign: 'center'
   },
-  statNumber: {
-    fontSize: '2rem',
-    fontWeight: 800,
-    color: '#60a5fa',
-    marginBottom: '8px'
+  heroContent: {
+    maxWidth: '900px',
+    margin: '0 auto'
   },
-  statLabel: {
-    fontSize: '0.9rem',
-    color: '#94a3b8',
-    fontWeight: 600,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em'
+  heroTitle: {
+    fontSize: '3rem',
+    fontWeight: 800,
+    marginBottom: '12px',
+    lineHeight: 1.3,
+    color: '#fff',
+    letterSpacing: '-0.02em'
+  },
+  heroSubtitle: {
+    fontSize: '1.2rem',
+    marginBottom: '32px',
+    opacity: 0.95,
+    fontWeight: 500,
+    color: '#fff',
+    lineHeight: 1.6,
+    letterSpacing: '0.01em'
+  },
+  heroButtons: {
+    display: 'flex',
+    gap: '12px',
+    justifyContent: 'center',
+    flexWrap: 'wrap'
+  },
+  primaryBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '14px 32px',
+    background: '#fff',
+    color: '#2563eb',
+    textDecoration: 'none',
+    borderRadius: '8px',
+    fontSize: '1.05rem',
+    fontWeight: 700,
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    letterSpacing: '0.02em'
+  },
+  secondaryBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '14px 32px',
+    background: 'rgba(255,255,255,0.2)',
+    color: '#fff',
+    textDecoration: 'none',
+    borderRadius: '8px',
+    fontSize: '1.05rem',
+    fontWeight: 700,
+    border: '2px solid #fff',
+    cursor: 'pointer',
+    transition: 'all 0.3s',
+    letterSpacing: '0.02em'
+  },
+  features: {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: '40px 20px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+    gap: '20px'
+  },
+  featureCard: {
+    background: '#fff',
+    padding: '24px',
+    borderRadius: '12px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    textAlign: 'center',
+    transition: 'all 0.3s'
+  },
+  featureIcon: {
+    width: '60px',
+    height: '60px',
+    background: '#f0f4ff',
+    borderRadius: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '0 auto 16px',
+    color: '#2563eb'
+  },
+  featureTitle: {
+    fontSize: '1.2rem',
+    fontWeight: 800,
+    marginBottom: '8px',
+    color: '#0a0a0a',
+    letterSpacing: '-0.01em'
+  },
+  featureDesc: {
+    fontSize: '0.95rem',
+    color: '#333',
+    lineHeight: 1.7,
+    letterSpacing: '0.005em',
+    fontWeight: 500
   }
 };
 
-export default function Home() {
-  const handleHover = (e, isHover) => {
-    const button = e.currentTarget;
-    if (button.classList.contains('btn-primary-home')) {
-      Object.assign(button.style, isHover ? styles.buttonPrimaryHover : { transform: 'translateY(0)' });
+export default function Home({ onLogin }) {
+  const handlePrimaryHover = (e, isHover) => {
+    if (isHover) {
+      e.currentTarget.style.transform = 'translateY(-2px)';
+      e.currentTarget.style.boxShadow = '0 8px 20px rgba(37, 99, 235, 0.3)';
     } else {
-      Object.assign(button.style, isHover ? styles.buttonSecondaryHover : { transform: 'translateY(0)' });
+      e.currentTarget.style.transform = 'translateY(0)';
+      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    }
+  };
+
+  const handleSecondaryHover = (e, isHover) => {
+    if (isHover) {
+      e.currentTarget.style.transform = 'translateY(-2px)';
+      e.currentTarget.style.background = 'rgba(255,255,255,0.3)';
+    } else {
+      e.currentTarget.style.transform = 'translateY(0)';
+      e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
+    }
+  };
+
+  const handleFeatureHover = (e, isHover) => {
+    if (isHover) {
+      e.currentTarget.style.transform = 'translateY(-8px)';
+      e.currentTarget.style.boxShadow = '0 12px 24px rgba(37, 99, 235, 0.15)';
+    } else {
+      e.currentTarget.style.transform = 'translateY(0)';
+      e.currentTarget.style.boxShadow = '0 2px 8px rgba(243, 235, 235, 0.08)';
     }
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.decorativeBlob1} />
-      <div style={styles.decorativeBlob2} />
-      
-      <div style={styles.content}>
-        <h1 style={styles.title}>Order Food</h1>
-        <p style={styles.subtitle}>Hệ thống đặt hàng nhà hàng thông minh. Đặt hàng nhanh, giao nhanh, thưởng thức ngay!</p>
-        
-        <div style={styles.buttonGroup}>
-          <Link 
-            to="/scan" 
-            style={styles.buttonPrimary}
-            className="btn-primary-home"
-            onMouseEnter={(e) => handleHover(e, true)}
-            onMouseLeave={(e) => handleHover(e, false)}
-          >
-            Quét mã QR để đặt hàng
-          </Link>
-          <Link 
-            to="/login" 
-            style={styles.buttonSecondary}
-            onMouseEnter={(e) => handleHover(e, true)}
-            onMouseLeave={(e) => handleHover(e, false)}
-          >
-            Đăng nhập quản lý
-          </Link>
+    <div style={styles.page}>
+      {/* HEADER */}
+      <div style={styles.header}>
+        <div style={styles.headerContent}>
+          <div style={styles.logo}>
+            <ShoppingCart size={28} />
+            <span>OrderFood</span>
+          </div>
+          <div style={styles.headerLinks}>
+            <Link to="/scan" style={{...styles.headerLink, textDecoration: 'none'}} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
+              🔍 Quét QR
+            </Link>
+            <Link to="/login" style={{...styles.headerLink, textDecoration: 'none'}} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
+              👤 Đăng nhập
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* HERO SECTION */}
+      <div style={styles.hero}>
+        <div style={styles.heroContent}>
+          <h1 style={styles.heroTitle}>
+            Đặt Món Nhanh<br/> Chỉ Với Một Cú Quét!🍔🧁
+          </h1>
+          <p style={styles.heroSubtitle}>
+            Hệ thống đặt món thông minh cho nhà hàng. Quét mã QR, chọn món, thanh toán - chỉ trong vài giây!
+          </p>
+          <div style={styles.heroButtons}>
+            <Link 
+              to="/scan"
+              style={styles.primaryBtn}
+              onMouseEnter={(e) => handlePrimaryHover(e, true)}
+              onMouseLeave={(e) => handlePrimaryHover(e, false)}
+            >
+              <Zap size={20} /> Đặt món ngay
+            </Link>
+            <Link 
+              to="/login"
+              style={styles.secondaryBtn}
+              onMouseEnter={(e) => handleSecondaryHover(e, true)}
+              onMouseLeave={(e) => handleSecondaryHover(e, false)}
+            >
+              <Star size={20} /> Quản lý nhà hàng
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* FEATURES */}
+      <div style={styles.features}>
+        <div 
+          style={styles.featureCard}
+          onMouseEnter={(e) => handleFeatureHover(e, true)}
+          onMouseLeave={(e) => handleFeatureHover(e, false)}
+        >
+          <div style={styles.featureIcon}>
+            <Zap size={28} />
+          </div>
+          <h3 style={styles.featureTitle}>Nhanh Chóng</h3>
+          <p style={styles.featureDesc}>Đặt món chỉ trong vài giây, không cần chờ đợi</p>
         </div>
 
-        <div style={styles.stats}>
-          <div style={styles.statItem}>
-            <div style={styles.statNumber}>500+</div>
-            <div style={styles.statLabel}>Thực đơn</div>
+        <div 
+          style={styles.featureCard}
+          onMouseEnter={(e) => handleFeatureHover(e, true)}
+          onMouseLeave={(e) => handleFeatureHover(e, false)}
+        >
+          <div style={styles.featureIcon}>
+            <Clock size={28} />
           </div>
-          <div style={styles.statItem}>
-            <div style={styles.statNumber}>24/7</div>
-            <div style={styles.statLabel}>Hoạt động</div>
+          <h3 style={styles.featureTitle}>Phục Vụ 24/7</h3>
+          <p style={styles.featureDesc}>Luôn sẵn sàng phục vụ bạn mọi lúc</p>
+        </div>
+
+        <div 
+          style={styles.featureCard}
+          onMouseEnter={(e) => handleFeatureHover(e, true)}
+          onMouseLeave={(e) => handleFeatureHover(e, false)}
+        >
+          <div style={styles.featureIcon}>
+            <ShoppingCart size={28} />
           </div>
-          <div style={styles.statItem}>
-            <div style={styles.statNumber}>Nhanh</div>
-            <div style={styles.statLabel}>Nhanh & Tiện</div>
+          <h3 style={styles.featureTitle}>500+ Món Ăn</h3>
+          <p style={styles.featureDesc}>Lựa chọn đa dạng, phong phú cho mọi khẩu vị</p>
+        </div>
+
+        <div 
+          style={styles.featureCard}
+          onMouseEnter={(e) => handleFeatureHover(e, true)}
+          onMouseLeave={(e) => handleFeatureHover(e, false)}
+        >
+          <div style={styles.featureIcon}>
+            <Star size={28} />
           </div>
+          <h3 style={styles.featureTitle}>Chất Lượng</h3>
+          <p style={styles.featureDesc}>Đảm bảo chất lượng tốt nhất cho khách hàng</p>
+        </div>
+      </div>
+
+      {/* FOOTER */}
+      <div style={{
+        background: '#f9f9f9',
+        borderTop: '1px solid #e5e5e5',
+        padding: '40px 20px',
+        textAlign: 'center',
+        color: '#666',
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif",
+        lineHeight: 1.6
+      }}>
+        <p style={{ margin: '0 0 16px', fontSize: '0.95rem' }}>© 2026 OrderFood. Tất cả quyền được bảo lưu.</p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' }}>
+          <a href="#" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>Về chúng tôi</a>
+          <a href="#" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>Điều khoản sử dụng</a>
+          <a href="#" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>Liên hệ</a>
         </div>
       </div>
     </div>

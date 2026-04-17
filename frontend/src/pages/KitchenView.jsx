@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useTheme } from '../ThemeContext';
 
 const styles = {
   page: {
     minHeight: '100vh',
-    background: 'radial-gradient(circle at top, #0f172a 0%, #020617 55%, #020617 100%)',
-    color: '#e2e8f0',
+    background: '#f5f5f5',
+    color: '#0f0e2e',
     padding: '24px',
     fontFamily: 'Inter, system-ui, sans-serif'
   },
@@ -22,11 +21,12 @@ const styles = {
   heading: {
     margin: 0,
     fontSize: 'clamp(2rem, 2.5vw, 2.5rem)',
-    lineHeight: 1.1
+    lineHeight: 1.1,
+    color: '#0f0e2e'
   },
   subtitle: {
     margin: 0,
-    color: '#94a3b8',
+    color: '#666',
     maxWidth: '720px'
   },
   grid: {
@@ -35,10 +35,10 @@ const styles = {
     gap: '20px'
   },
   card: {
-    background: 'rgba(15, 23, 42, 0.95)',
-    border: '1px solid rgba(148, 163, 184, 0.18)',
-    borderRadius: '24px',
-    boxShadow: '0 20px 60px rgba(15, 23, 42, 0.45)',
+    background: '#fff',
+    border: '1px solid #e5e5e5',
+    borderRadius: '12px',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
@@ -49,7 +49,7 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     padding: '22px',
-    borderBottom: '1px solid rgba(148, 163, 184, 0.08)'
+    borderBottom: '1px solid #e5e5e5'
   },
   tableBadge: {
     background: '#2563eb',
@@ -60,8 +60,8 @@ const styles = {
     fontSize: '0.95rem'
   },
   statusTag: {
-    color: '#f8fafc',
-    background: 'rgba(59, 130, 246, 0.12)',
+    color: '#2563eb',
+    background: 'rgba(37, 99, 235, 0.1)',
     borderRadius: '999px',
     padding: '8px 12px',
     fontSize: '0.82rem',
@@ -71,7 +71,7 @@ const styles = {
     padding: '18px 22px 22px'
   },
   time: {
-    color: '#94a3b8',
+    color: '#999',
     fontSize: '0.94rem',
     marginTop: '8px'
   },
@@ -87,36 +87,36 @@ const styles = {
     justifyContent: 'space-between',
     gap: '12px',
     padding: '14px 16px',
-    background: 'rgba(30, 41, 59, 0.85)',
-    borderRadius: '18px'
+    background: '#f5f5f5',
+    borderRadius: '8px'
   },
   itemName: {
     margin: 0,
     fontWeight: 600,
-    color: '#f8fafc'
+    color: '#0f0e2e'
   },
   itemQty: {
     margin: 0,
-    color: '#93c5fd',
+    color: '#2563eb',
     fontWeight: 700
   },
   button: {
     marginTop: 'auto',
     width: '100%',
     border: 'none',
-    borderTop: '1px solid rgba(148, 163, 184, 0.1)',
+    borderTop: '1px solid #e5e5e5',
     padding: '18px',
     cursor: 'pointer',
-    background: 'linear-gradient(90deg, #2563eb, #4f46e5)',
+    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
     color: '#fff',
     fontWeight: 700,
     fontSize: '1rem',
-    transition: 'transform 0.18s ease, opacity 0.18s ease'
+    transition: 'all 0.2s'
   },
   footer: {
     marginTop: '24px',
     textAlign: 'center',
-    color: '#94a3b8'
+    color: '#999'
   }
 };
 
@@ -133,18 +133,14 @@ const formatTimeSince = (createdAt) => {
 };
 
 export default function KitchenView({ onLogout }) {
-  const { theme, toggleTheme } = useTheme();
-  const isDark = theme === 'dark';
-
-  const pageBg = isDark
-    ? 'radial-gradient(circle at top, #0f172a 0%, #020617 55%, #020617 100%)'
-    : 'linear-gradient(135deg, #f0f4ff 0%, #e8edf8 100%)';
-  const textMain = isDark ? '#e2e8f0' : '#0f172a';
-  const textMuted = isDark ? '#94a3b8' : '#64748b';
-  const cardBg = isDark ? 'rgba(15, 23, 42, 0.95)' : '#ffffff';
-  const cardBorder = isDark ? 'rgba(148, 163, 184, 0.18)' : '#e2e8f0';
-  const itemRowBg = isDark ? 'rgba(30, 41, 59, 0.85)' : '#f1f5f9';
-  const tabBorderColor = isDark ? 'rgba(148, 163, 184, 0.1)' : '#e2e8f0';
+  // Light theme only
+  const pageBg = '#f5f5f5';
+  const textMain = '#0f0e2e';
+  const textMuted = '#666';
+  const cardBg = '#fff';
+  const cardBorder = '#e5e5e5';
+  const itemRowBg = '#f5f5f5';
+  const tabBorderColor = '#e5e5e5';
 
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -244,9 +240,6 @@ export default function KitchenView({ onLogout }) {
         </div>
         <div style={{ display: 'grid', gap: '10px', textAlign: 'right' }}>
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-            <button onClick={toggleTheme} className="theme-toggle-btn">
-              {isDark ? '☀️ Light' : '🌙 Dark'}
-            </button>
             <button
               onClick={handleLogout}
               style={{
@@ -393,7 +386,7 @@ export default function KitchenView({ onLogout }) {
                       <p style={{ margin: '6px 0 0', color: textMuted, fontSize: '0.9rem' }}>
                         {item.category?.name || 'Không xác định'}
                       </p>
-                      <p style={{ margin: '4px 0 0', color: isDark ? '#cbd5e1' : '#334155', fontSize: '0.9rem', fontWeight: 600 }}>
+                      <p style={{ margin: '4px 0 0', color: '#334155', fontSize: '0.9rem', fontWeight: 600 }}>
                         {(item.price || 0).toLocaleString('vi-VN')} đ
                       </p>
                     </div>

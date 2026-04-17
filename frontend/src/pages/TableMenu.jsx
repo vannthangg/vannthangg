@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useTheme } from '../ThemeContext';
 
 const sectionStyles = {
   page: {
@@ -9,9 +8,10 @@ const sectionStyles = {
     overflow: 'hidden',
     padding: '28px 16px 28px',
     fontFamily: 'Inter, system-ui, sans-serif',
-    color: '#f8fafc',
+    color: '#0f0e2e',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    background: '#f5f5f5'
   },
   pageContainer: {
     display: 'grid',
@@ -40,14 +40,11 @@ const sectionStyles = {
     fontSize: 'clamp(2rem, 6vw, 2.8rem)',
     lineHeight: 1.05,
     fontWeight: 800,
-    background: 'linear-gradient(135deg, #60a5fa 0%, #8b5cf6 100%)',
-    backgroundClip: 'text',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    color: '#0f0e2e'
   },
   subtitle: {
     margin: '12px 0 0',
-    color: '#94a3b8',
+    color: '#666',
     maxWidth: '720px',
     fontSize: '1rem',
     lineHeight: 1.6,
@@ -109,27 +106,27 @@ const sectionStyles = {
     gap: '16px'
   },
   card: {
-    background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(26, 31, 58, 0.8) 100%)',
-    border: '1.5px solid rgba(148, 163, 184, 0.12)',
-    borderRadius: '16px',
+    background: '#fff',
+    border: '1px solid #e5e5e5',
+    borderRadius: '12px',
     overflow: 'hidden',
-    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
     display: 'flex',
     flexDirection: 'column',
-    transition: 'var(--transition)',
+    transition: 'all 0.2s',
     cursor: 'pointer'
   },
   cardHover: {
-    transform: 'translateY(-8px)',
-    borderColor: 'rgba(59, 130, 246, 0.3)',
-    boxShadow: '0 16px 40px rgba(59, 130, 246, 0.15)'
+    transform: 'translateY(-4px)',
+    borderColor: '#2563eb',
+    boxShadow: '0 8px 16px rgba(37, 99, 235, 0.15)'
   },
   image: {
     width: '100%',
     height: '160px',
     objectFit: 'cover',
-    backgroundColor: '#111827',
-    transition: 'var(--transition)'
+    backgroundColor: '#f5f5f5',
+    transition: 'all 0.2s'
   },
   cardBody: {
     padding: '16px',
@@ -140,15 +137,16 @@ const sectionStyles = {
   itemTitle: {
     margin: 0,
     fontSize: '1rem',
-    fontWeight: 700,
-    color: '#f8fafc'
+    fontWeight: 800,
+    color: '#000'
   },
   itemDescription: {
     margin: '8px 0 0',
-    color: '#94a3b8',
+    color: '#333',
     fontSize: '0.85rem',
     lineHeight: 1.5,
-    flex: 1
+    flex: 1,
+    fontWeight: 500
   },
   outOfStockOverlay: {
     position: 'absolute',
@@ -156,16 +154,16 @@ const sectionStyles = {
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'rgba(10, 14, 39, 0.8)',
+    background: 'rgba(255, 255, 255, 0.9)',
     backdropFilter: 'blur(2px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '16px',
+    borderRadius: '12px',
     zIndex: 10
   },
   outOfStockBadge: {
-    background: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
+    background: '#dc2626',
     color: '#fff',
     padding: '12px 20px',
     borderRadius: '999px',
@@ -173,7 +171,7 @@ const sectionStyles = {
     fontWeight: 800,
     textTransform: 'uppercase',
     letterSpacing: '0.05em',
-    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.4)'
+    boxShadow: '0 2px 8px rgba(220, 38, 38, 0.2)'
   },
   itemFooter: {
     display: 'flex',
@@ -185,15 +183,12 @@ const sectionStyles = {
   price: {
     fontSize: '1.1rem',
     fontWeight: 800,
-    background: 'linear-gradient(135deg, #60a5fa 0%, #8b5cf6 100%)',
-    backgroundClip: 'text',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    color: '#2563eb'
   },
   addButton: {
     border: 'none',
-    borderRadius: '10px',
-    background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+    borderRadius: '8px',
+    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
     color: '#fff',
     padding: '8px 12px',
     fontWeight: 700,
@@ -222,14 +217,14 @@ const sectionStyles = {
     overflowY: 'hidden'
   },
   footerCard: {
-    borderRadius: '20px',
-    background: 'linear-gradient(135deg, rgba(26, 31, 58, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)',
-    border: '1.5px solid rgba(96, 165, 250, 0.2)',
+    borderRadius: '12px',
+    background: '#fff',
+    border: '1px solid #e5e5e5',
     padding: '16px',
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
-    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
     height: '100%'
   },
   footerRow: {
@@ -240,7 +235,7 @@ const sectionStyles = {
     flexWrap: 'wrap'
   },
   footerLabel: {
-    color: '#94a3b8',
+    color: '#999',
     fontSize: '1rem',
     fontWeight: 600,
     textTransform: 'uppercase',
@@ -249,27 +244,24 @@ const sectionStyles = {
   footerTotal: {
     fontSize: '2rem',
     fontWeight: 800,
-    background: 'linear-gradient(135deg, #60a5fa 0%, #8b5cf6 100%)',
-    backgroundClip: 'text',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
+    color: '#2563eb'
   },
   checkoutButton: {
     border: 'none',
-    borderRadius: '12px',
-    background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+    borderRadius: '8px',
+    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
     color: '#fff',
     padding: '18px 24px',
     fontWeight: 800,
     cursor: 'pointer',
     width: '100%',
     fontSize: '1.05rem',
-    transition: 'var(--transition)',
-    boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)'
+    transition: 'all 0.2s',
+    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.2)'
   },
   checkoutButtonHover: {
     transform: 'translateY(-2px)',
-    boxShadow: '0 12px 32px rgba(59, 130, 246, 0.4)'
+    boxShadow: '0 6px 16px rgba(37, 99, 235, 0.3)'
   },
   checkoutButtonDisabled: {
     opacity: 0.5,
@@ -281,27 +273,28 @@ const sectionStyles = {
     transform: 'translateX(-50%)',
     bottom: '140px',
     zIndex: 60,
-    borderRadius: '12px',
+    borderRadius: '8px',
     padding: '14px 24px',
-    boxShadow: '0 16px 40px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
     fontWeight: 700,
     textAlign: 'center',
     minWidth: '280px',
     maxWidth: '90%',
     fontSize: '0.95rem',
-    animation: 'slideInUp 0.3s ease-out'
+    animation: 'slideInUp 0.3s ease-out',
+    background: '#2563eb',
+    color: '#fff'
   },
   searchBox: {
     width: '100%',
     padding: '14px 18px',
-    background: 'rgba(30, 41, 59, 0.8)',
-    border: '1.5px solid rgba(148, 163, 184, 0.12)',
-    borderRadius: '12px',
-    color: '#f8fafc',
+    background: '#fff',
+    border: '1.5px solid #e5e5e5',
+    borderRadius: '8px',
+    color: '#0f0e2e',
     fontSize: '1rem',
     marginBottom: '28px',
-    transition: 'var(--transition)',
-    backdropFilter: 'blur(8px)',
+    transition: 'all 0.2s',
     fontWeight: 500
   }
 };
@@ -317,27 +310,17 @@ function calculateCartTotal(cartItems) {
 }
 
 export default function TableMenu() {
-  const { theme, toggleTheme } = useTheme();
-  const isDark = theme === 'dark';
-
-  const pageBg = isDark
-    ? 'linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0d1135 100%)'
-    : 'linear-gradient(135deg, #e8edf8 0%, #f0f4ff 50%, #dde8ff 100%)';
-  const textMain = isDark ? '#f8fafc' : '#0f172a';
-  const textMuted = isDark ? '#94a3b8' : '#64748b';
-  const cardBg = isDark
-    ? 'linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(26, 31, 58, 0.8) 100%)'
-    : 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)';
-  const cardBorderColor = isDark ? 'rgba(148, 163, 184, 0.12)' : 'rgba(15,23,42,0.1)';
-  const footerBg = isDark
-    ? 'linear-gradient(135deg, rgba(26, 31, 58, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%)'
-    : 'linear-gradient(135deg, rgba(255,255,255,0.97) 0%, rgba(240,244,255,0.97) 100%)';
-  const footerGradient = isDark
-    ? 'linear-gradient(to top, rgba(10, 14, 39, 0.98), rgba(10, 14, 39, 0.7), transparent)'
-    : 'linear-gradient(to top, rgba(232,237,248,0.98), rgba(232,237,248,0.7), transparent)';
-  const searchBg = isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255,255,255,0.9)';
-  const searchBorderColor = isDark ? 'rgba(148, 163, 184, 0.12)' : '#e2e8f0';
-  const tabBg = isDark ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255,255,255,0.8)';
+  // Light theme only
+  const pageBg = '#f5f5f5';
+  const textMain = '#0a0a0a';
+  const textMuted = '#222';
+  const cardBg = '#fff';
+  const cardBorderColor = '#e5e5e5';
+  const footerBg = '#fff';
+  const footerGradient = 'linear-gradient(to top, rgba(245,245,245,0.98), rgba(245,245,245,0.7), transparent)';
+  const searchBg = '#fff';
+  const searchBorderColor = '#e5e5e5';
+  const tabBg = '#f0f4ff';
 
   const navigate = useNavigate();
   const { tableId: tableIdParam } = useParams();
@@ -481,14 +464,8 @@ export default function TableMenu() {
                   onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.05)', boxShadow: '0 6px 16px rgba(239, 68, 68, 0.4)' })}
                   onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' })}
                 >
-                  ← Quay lại
+                  Quay lại
                 </button>
-                
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <button onClick={toggleTheme} className="theme-toggle-btn">
-                    {isDark ? '☀️ Light' : '🌙 Dark'}
-                  </button>
-                </div>
               </div>
             </header>
 
@@ -549,8 +526,8 @@ export default function TableMenu() {
               <div style={{ display: 'grid', gap: '24px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                   <div>
-                    <h2 style={{ margin: '0 0 8px', color: '#fff', fontSize: '1.25rem' }}>{activeCategory.name}</h2>
-                    <p style={{ margin: 0, color: '#94a3b8' }}>{(activeCategory.items?.length || 0)} món ăn</p>
+                    <h2 style={{ margin: '0 0 8px', color: '#000', fontSize: '1.25rem', fontWeight: 800 }}>{activeCategory.name}</h2>
+                    <p style={{ margin: 0, color: '#333', fontWeight: 600 }}>{(activeCategory.items?.length || 0)} món ăn</p>
                   </div>
                   <div style={sectionStyles.badge}>{(activeCategory.items || []).filter((item) => item.isAvailable).length} còn hàng</div>
                 </div>

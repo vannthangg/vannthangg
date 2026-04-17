@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useTheme } from '../ThemeContext';
 
 export default function MenuManager() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [addForm, setAddForm] = useState({
@@ -20,24 +16,22 @@ export default function MenuManager() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingEditImage, setUploadingEditImage] = useState(false);
 
-  // Theme-aware styles
-  const cardBg = isDark
-    ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
-    : 'linear-gradient(135deg, #ffffff 0%, #f1f5ff 100%)';
-  const cardBorder = isDark ? '#334155' : '#cbd5e1';
-  const cardShadow = isDark ? '0 20px 60px rgba(0,0,0,0.5)' : '0 8px 32px rgba(15,23,42,0.1)';
-  const inputBg = isDark ? '#0f172a' : '#f8fafc';
-  const inputColor = isDark ? '#fff' : '#0f172a';
-  const inputBorder = isDark ? '1px solid #334155' : '1px solid #cbd5e1';
-  const textMain = isDark ? '#fff' : '#0f172a';
-  const textSub = isDark ? '#cbd5e1' : '#334155';
-  const textMuted = isDark ? '#94a3b8' : '#64748b';
-  const tableHeaderBg = isDark ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.07)';
-  const tableRowAlt = isDark ? 'rgba(139, 92, 246, 0.05)' : 'rgba(139, 92, 246, 0.03)';
-  const modalBackdrop = isDark ? 'rgba(0,0,0,0.75)' : 'rgba(15,23,42,0.5)';
-  const modalBorder = isDark ? '#8b5cf6' : '#7c3aed';
-  const closeBtnBg = isDark ? '#334155' : '#e2e8f0';
-  const closeBtnColor = isDark ? '#fff' : '#334155';
+  // Light theme only
+  const cardBg = 'linear-gradient(135deg, #ffffff 0%, #f1f5ff 100%)';
+  const cardBorder = '#cbd5e1';
+  const cardShadow = '0 8px 32px rgba(15,23,42,0.1)';
+  const inputBg = '#f8fafc';
+  const inputColor = '#0f172a';
+  const inputBorder = '1px solid #cbd5e1';
+  const textMain = '#0f172a';
+  const textSub = '#334155';
+  const textMuted = '#64748b';
+  const tableHeaderBg = 'rgba(59, 130, 246, 0.07)';
+  const tableRowAlt = 'rgba(139, 92, 246, 0.03)';
+  const modalBackdrop = 'rgba(15,23,42,0.5)';
+  const modalBorder = '#7c3aed';
+  const closeBtnBg = '#e2e8f0';
+  const closeBtnColor = '#334155';
 
   useEffect(() => {
     fetchData();
