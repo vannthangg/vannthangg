@@ -23,18 +23,19 @@ export default function TableManager() {
 
   return (
     <div style={{
-      backgroundColor: '#1e293b', 
+      backgroundColor: '#fff', 
       padding: '40px', 
       borderRadius: '20px',
-      boxShadow: '0 20px 40px rgba(0,0,0,0.4)', 
+      boxShadow: '0 4px 12px rgba(232, 93, 4, 0.08)', 
       width: '100%', 
       maxWidth: '1000px', 
       margin: '0 auto', 
-      fontFamily: 'system-ui, sans-serif'
+      fontFamily: '"Times New Roman", Times, serif',
+      border: '2px solid #e85d0420'
     }}>
       {/* Tiêu đề */}
-      <h2 style={{ color: '#fff', fontSize: '2rem', margin: '0 0 10px 0' }}>Quản lý Bàn & Mã QR</h2>
-      <p style={{ color: '#94a3b8', fontSize: '1.1rem', marginBottom: '35px' }}>
+      <h2 style={{ color: '#e85d04', fontSize: '2rem', margin: '0 0 10px 0', fontFamily: '"Times New Roman", Times, serif' }}>Quản lý Bàn & Mã QR</h2>
+      <p style={{ color: '#666', fontSize: '1.1rem', marginBottom: '35px', fontFamily: '"Times New Roman", Times, serif' }}>
         Danh sách mã QR cho từng bàn. Bạn có thể in hoặc tải xuống để dán tại bàn cho khách quét gọi món.
       </p>
       
@@ -46,21 +47,22 @@ export default function TableManager() {
           
           return (
             <div key={table.id} style={{ 
-              backgroundColor: '#334155', 
+              backgroundColor: '#fff', 
               padding: '24px', 
               borderRadius: '16px', 
               display: 'flex', 
               flexDirection: 'column', 
               alignItems: 'center',
-              border: '1px solid #475569',
+              border: '2px solid #e85d0420',
               transition: 'transform 0.2s',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(232, 93, 4, 0.08)'
             }}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+            onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-5px)'; e.currentTarget.style.boxShadow = '0 12px 20px rgba(232, 93, 4, 0.15)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(232, 93, 4, 0.08)'; }}
             >
               {/* Tên bàn */}
-              <h3 style={{ color: '#fff', fontSize: '1.5rem', margin: '0 0 20px 0' }}>{table.name}</h3>
+              <h3 style={{ color: '#e85d04', fontSize: '1.5rem', margin: '0 0 20px 0', fontFamily: '"Times New Roman", Times, serif' }}>{table.name}</h3>
               
               {/* Vùng chứa QR (Lót nền trắng để điện thoại dễ quét) */}
               <div style={{ backgroundColor: '#fff', padding: '12px', borderRadius: '12px', marginBottom: '15px' }}>
@@ -68,17 +70,22 @@ export default function TableManager() {
               </div>
 
               {/* Đường link nhỏ hiển thị bên dưới */}
-              <p style={{ color: '#94a3b8', fontSize: '0.85rem', textAlign: 'center', margin: '0 0 20px 0', wordBreak: 'break-all' }}>
+              <p style={{ color: '#999', fontSize: '0.85rem', textAlign: 'center', margin: '0 0 20px 0', wordBreak: 'break-all', fontFamily: '"Times New Roman", Times, serif' }}>
                 {qrUrl}
               </p>
 
               {/* Nút bấm tải về */}
               <button style={{ 
                 width: '100%', padding: '12px', borderRadius: '8px', 
-                backgroundColor: '#3b82f6', color: '#fff', fontSize: '1rem',
+                backgroundColor: '#e85d04', color: '#fff', fontSize: '1rem',
                 fontWeight: 'bold', border: 'none', cursor: 'pointer',
-                boxShadow: '0 4px 10px rgba(59, 130, 246, 0.3)'
-              }}>
+                boxShadow: '0 4px 10px rgba(232, 93, 4, 0.3)',
+                fontFamily: '"Times New Roman", Times, serif',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = '#d64803'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = '#e85d04'; }}
+              >
                 Tải xuống mã QR
               </button>
             </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { AUTH_API } from '../config/api';
 
 const styles = {
   container: {
@@ -68,12 +69,12 @@ const styles = {
     transition: 'all 0.2s'
   },
   inputFocus: {
-    borderColor: '#2563eb',
-    boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.08)',
+    borderColor: '#e85d04',
+    boxShadow: '0 0 0 3px rgba(232, 93, 4, 0.08)',
     background: '#fff'
   },
   button: {
-    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    background: 'linear-gradient(135deg, #e85d04 0%, #d64803 100%)',
     color: '#fff',
     padding: '11px 26px',
     border: 'none',
@@ -83,7 +84,7 @@ const styles = {
     marginTop: '8px',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.2)'
+    boxShadow: '0 2px 8px rgba(232, 93, 4, 0.2)'
   },
   error: {
     background: 'rgba(239, 68, 68, 0.1)',
@@ -98,7 +99,7 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '6px',
-    color: '#2563eb',
+    color: '#e85d04',
     textDecoration: 'none',
     fontSize: '0.85rem',
     fontWeight: 600,
@@ -118,7 +119,7 @@ export default function Login({onLogin}) {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:3000/api/auth/login', { username, password });
+      const res = await axios.post(AUTH_API.LOGIN, { username, password });
       localStorage.setItem('user', JSON.stringify(res.data.user));
       const userRole = res.data.user.role.toLowerCase();
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ADMIN_USERS_API } from '../config/api';
 
 export default function EmployeeManager() {
   const [username, setUsername] = useState('');
@@ -26,7 +27,7 @@ export default function EmployeeManager() {
   const loadEmployees = async () => {
     try {
       setLoadingList(true);
-      const response = await axios.get('http://localhost:3000/api/admin/users');
+      const response = await axios.get(ADMIN_USERS_API.GET_ALL_USERS);
       setEmployees(response.data || []);
     } catch (error) {
       console.error('Lỗi tải danh sách nhân viên:', error);
@@ -48,7 +49,7 @@ export default function EmployeeManager() {
 
     try {
       setSubmitting(true);
-      await axios.post('http://localhost:3000/api/admin/users', { username, password, name, role });
+      await axios.post(ADMIN_USERS_API.CREATE_USER, { username, password, name, role });
       setMessage('Tạo tài khoản nhân viên thành công!');
       setMessageType('success');
       setUsername(''); setPassword(''); setName(''); setRole('Kitchen');
@@ -67,7 +68,7 @@ export default function EmployeeManager() {
     if (!window.confirm('Bạn chắc chắn muốn xóa?')) return;
     try {
       setDeleteLoading(empId);
-      await axios.delete(`http://localhost:3000/api/admin/users/${empId}`);
+      await axios.delete(ADMIN_USERS_API.DELETE_USER(empId));
       setEmployees((prev) => prev.filter((emp) => emp.id !== empId));
       setMessage('Xóa nhân viên thành công!');
       setMessageType('success');
@@ -101,7 +102,7 @@ export default function EmployeeManager() {
       setEditSubmitting(true);
       const payload = { username: editForm.username, name: editForm.name, role: editForm.role };
       if (editForm.password) payload.password = editForm.password;
-      const res = await axios.put(`http://localhost:3000/api/admin/users/${editEmp.id}`, payload);
+      const res = await axios.put(ADMIN_USERS_API.UPDATE_USER(editEmp.id), payload);
       setEmployees((prev) => prev.map((emp) => emp.id === editEmp.id ? res.data : emp));
       setMessage('Cập nhật nhân viên thành công!');
       setMessageType('success');
@@ -123,12 +124,13 @@ export default function EmployeeManager() {
   const inputStyle = {
     padding: '12px',
     borderRadius: '8px',
-    border: '1px solid #334155',
-    background: '#0f172a',
-    color: '#fff',
+    border: '2px solid #e85d0420',
+    background: '#fff',
+    color: '#0f0e2e',
     width: '100%',
     boxSizing: 'border-box',
-    fontSize: '0.95rem'
+    fontSize: '0.95rem',
+    fontFamily: '"Times New Roman", Times, serif'
   };
 
   return (
@@ -169,7 +171,7 @@ export default function EmployeeManager() {
 
             <form onSubmit={handleEditSubmit} style={{ display: 'grid', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '0.85rem', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Username</label>
+                <label style={{ display: 'block', color: '#666', fontSize: '0.85rem', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: '"Times New Roman", Times, serif' }}>Username</label>
                 <input
                   type="text"
                   value={editForm.username}
@@ -179,7 +181,7 @@ export default function EmployeeManager() {
                 />
               </div>
               <div>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '0.85rem', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Họ và tên</label>
+                <label style={{ display: 'block', color: '#666', fontSize: '0.85rem', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: '"Times New Roman", Times, serif' }}>Họ và tên</label>
                 <input
                   type="text"
                   value={editForm.name}
@@ -189,7 +191,7 @@ export default function EmployeeManager() {
                 />
               </div>
               <div>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '0.85rem', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Vai trò</label>
+                <label style={{ display: 'block', color: '#666', fontSize: '0.85rem', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: '"Times New Roman", Times, serif' }}>Vai trò</label>
                 <select
                   value={editForm.role}
                   onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
@@ -201,8 +203,8 @@ export default function EmployeeManager() {
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', color: '#94a3b8', fontSize: '0.85rem', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Mật khẩu mới <span style={{ color: '#64748b', fontWeight: '400', textTransform: 'none' }}>(để trống nếu không đổi)</span>
+                <label style={{ display: 'block', color: '#666', fontSize: '0.85rem', marginBottom: '6px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em', fontFamily: '"Times New Roman", Times, serif' }}>
+                  Mật khẩu mới <span style={{ color: '#999', fontWeight: '400', textTransform: 'none' }}>(để trống nếu không đổi)</span>
                 </label>
                 <input
                   type="password"
@@ -219,11 +221,12 @@ export default function EmployeeManager() {
                   disabled={editSubmitting}
                   style={{
                     flex: 1, padding: '13px 20px',
-                    background: editSubmitting ? '#4b5563' : 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+                    background: editSubmitting ? '#e85d0480' : '#e85d04',
                     color: '#fff', border: 'none', borderRadius: '10px',
                     cursor: editSubmitting ? 'not-allowed' : 'pointer',
                     fontWeight: '700', fontSize: '1rem',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    fontFamily: '"Times New Roman", Times, serif'
                   }}
                 >
                   {editSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
@@ -233,11 +236,12 @@ export default function EmployeeManager() {
                   onClick={handleEditClose}
                   style={{
                     flex: 1, padding: '13px 20px',
-                    background: 'rgba(100,116,139,0.2)',
-                    border: '1px solid #334155',
-                    color: '#cbd5e1', borderRadius: '10px',
+                    background: '#f5f5f5',
+                    border: '1px solid #ddd',
+                    color: '#666', borderRadius: '10px',
                     cursor: 'pointer', fontWeight: '600', fontSize: '1rem',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    fontFamily: '"Times New Roman", Times, serif'
                   }}
                 >
                   Hủy
@@ -252,43 +256,44 @@ export default function EmployeeManager() {
       {message && (
         <div style={{
           padding: '14px 16px', borderRadius: '12px', fontSize: '0.95rem', fontWeight: '600',
-          background: messageType === 'success' ? '#10b98140' : '#ef444440',
-          border: messageType === 'success' ? '2px solid #10b981' : '2px solid #ef4444',
-          color: messageType === 'success' ? '#10b981' : '#ef4444'
+          background: messageType === 'success' ? '#e85d0415' : '#e85d0415',
+          border: messageType === 'success' ? '2px solid #e85d04' : '2px solid #e85d04',
+          color: messageType === 'success' ? '#e85d04' : '#e85d04',
+          fontFamily: '"Times New Roman", Times, serif'
         }}>
           {message}
         </div>
       )}
 
       {/* FORM TẠO NHÂN VIÊN */}
-      <section style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderRadius: '24px', padding: '40px', color: '#e2e8f0', border: '2px solid #334155', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
-        <h2 style={{ margin: 0, marginBottom: '24px', color: '#fff', fontSize: '1.8rem', fontWeight: '800' }}>Tạo Nhân Viên</h2>
+      <section style={{ background: '#fff', borderRadius: '24px', padding: '40px', color: '#0f0e2e', border: '2px solid #e85d0420', boxShadow: '0 4px 12px rgba(232, 93, 4, 0.08)', fontFamily: '"Times New Roman", Times, serif' }}>
+        <h2 style={{ margin: 0, marginBottom: '24px', color: '#e85d04', fontSize: '1.8rem', fontWeight: '800', fontFamily: '"Times New Roman", Times, serif' }}>Tạo Nhân Viên</h2>
         <form style={{ display: 'grid', gap: '16px' }} onSubmit={handleSubmit}>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Username"
-            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+            style={{ padding: '12px', borderRadius: '8px', border: '2px solid #e85d0420', background: '#fff', color: '#0f0e2e', fontFamily: '"Times New Roman", Times, serif' }}
           />
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Mật khẩu"
-            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+            style={{ padding: '12px', borderRadius: '8px', border: '2px solid #e85d0420', background: '#fff', color: '#0f0e2e', fontFamily: '"Times New Roman", Times, serif' }}
           />
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Họ và tên"
-            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+            style={{ padding: '12px', borderRadius: '8px', border: '2px solid #e85d0420', background: '#fff', color: '#0f0e2e', fontFamily: '"Times New Roman", Times, serif' }}
           />
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            style={{ padding: '12px', borderRadius: '8px', border: '1px solid #334155', background: '#0f172a', color: '#fff' }}
+            style={{ padding: '12px', borderRadius: '8px', border: '2px solid #e85d0420', background: '#fff', color: '#0f0e2e', fontFamily: '"Times New Roman", Times, serif' }}
           >
             <option value="Kitchen">Bếp</option>
             <option value="admin">Admin</option>
@@ -297,7 +302,7 @@ export default function EmployeeManager() {
           <button
             type="submit"
             disabled={submitting}
-            style={{ padding: '12px 24px', background: submitting ? '#6b7280' : '#8b5cf6', color: '#fff', border: 'none', borderRadius: '8px', cursor: submitting ? 'not-allowed' : 'pointer', fontWeight: '600', opacity: submitting ? 0.7 : 1 }}
+            style={{ padding: '12px 24px', background: submitting ? '#e85d0480' : '#e85d04', color: '#fff', border: 'none', borderRadius: '8px', cursor: submitting ? 'not-allowed' : 'pointer', fontWeight: '600', opacity: submitting ? 0.7 : 1, fontFamily: '"Times New Roman", Times, serif' }}
           >
             {submitting ? 'Đang tạo...' : 'Tạo Nhân Viên'}
           </button>
@@ -308,7 +313,7 @@ export default function EmployeeManager() {
       <section style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderRadius: '24px', padding: '40px', color: '#e2e8f0', border: '2px solid #334155', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
         <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2 style={{ margin: 0, color: '#fff', fontSize: '1.8rem', fontWeight: '800' }}>Danh Sách ({employees.length})</h2>
-          <button onClick={loadEmployees} style={{ padding: '8px 16px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}>Làm mới</button>
+          <button onClick={loadEmployees} style={{ padding: '8px 16px', background: '#e85d04', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}>Làm mới</button>
         </div>
 
         {loadingList ? (

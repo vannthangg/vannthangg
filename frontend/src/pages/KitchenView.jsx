@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 
 const styles = {
   page: {
@@ -52,7 +53,7 @@ const styles = {
     borderBottom: '1px solid #e5e5e5'
   },
   tableBadge: {
-    background: '#2563eb',
+    background: '#ff8500',
     color: '#fff',
     borderRadius: '999px',
     padding: '8px 14px',
@@ -60,8 +61,8 @@ const styles = {
     fontSize: '0.95rem'
   },
   statusTag: {
-    color: '#2563eb',
-    background: 'rgba(37, 99, 235, 0.1)',
+    color: '#ff8500',
+    background: 'rgba(255, 133, 0, 0.1)',
     borderRadius: '999px',
     padding: '8px 12px',
     fontSize: '0.82rem',
@@ -97,7 +98,7 @@ const styles = {
   },
   itemQty: {
     margin: 0,
-    color: '#2563eb',
+    color: '#ff8500',
     fontWeight: 700
   },
   button: {
@@ -107,7 +108,7 @@ const styles = {
     borderTop: '1px solid #e5e5e5',
     padding: '18px',
     cursor: 'pointer',
-    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    background: 'linear-gradient(135deg, #ff8500 0%, #ff7000 100%)',
     color: '#fff',
     fontWeight: 700,
     fontSize: '1rem',
@@ -208,8 +209,50 @@ export default function KitchenView({ onLogout }) {
 
   useEffect(() => {
     loadOrders();
+    
+    // Socket.io real-time updates
+    const socket = io('http://localhost:3000', {
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: 5
+    });
+
+    // Listen for new orders
+    socket.on('new-order', (newOrder) => {
+      console.log('📦 Đơn mới:', newOrder);
+      setOrders((prev) => [newOrder, ...prev]);
+    });
+
+    // Listen for order status updates
+    socket.on('order-status-update', (updatedOrder) => {
+      console.log('🔄 Cập nhật đơn:', updatedOrder);
+      const validStatuses = ['pending', 'Pending', 'Processing', 'processing', 'ready', 'Ready', 'cooking', 'Cooking'];
+      if (validStatuses.includes(updatedOrder.status)) {
+        // Update order if still in kitchen view
+        setOrders((prev) => 
+          prev.map((o) => o.id === updatedOrder.id ? updatedOrder : o)
+        );
+      } else {
+        // Remove order if status changed to waiting_payment, completed, etc
+        setOrders((prev) => prev.filter((o) => o.id !== updatedOrder.id));
+      }
+    });
+
+    socket.on('connect_error', (error) => {
+      console.warn('Socket.io connection error:', error);
+    });
+
+    // Fallback: poll every 5 seconds
     const interval = setInterval(loadOrders, 5000);
-    return () => clearInterval(interval);
+
+    return () => {
+      clearInterval(interval);
+      socket.off('new-order');
+      socket.off('order-status-update');
+      socket.off('connect_error');
+      socket.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -221,8 +264,8 @@ export default function KitchenView({ onLogout }) {
   const handleMarkDone = async (orderId) => {
     try {
       setActionLoading(orderId);
-      await axios.patch(`http://localhost:3000/api/admin/order/${orderId}/status`, { status: 'Served' });
-      setOrders((current) => current.filter((order) => order.id !== orderId));
+      await axios.patch(`http://localhost:3000/api/admin/order/${orderId}/status`, { status: 'waiting_payment' });
+      // Không filter local - để backend & Socket.io xử lý
     } catch (err) {
       console.error(err);
       setError('Cập nhật trạng thái thất bại.');
@@ -260,7 +303,7 @@ export default function KitchenView({ onLogout }) {
             </button>
           </div>
           <div style={{ color: textMuted }}>Cập nhật tự động mỗi 5 giây</div>
-          <div style={{ background: 'rgba(59, 130, 246, 0.15)', padding: '10px 14px', borderRadius: '999px', color: '#bfdbfe', fontWeight: 700 }}>Đơn đang chờ: {orders.length}</div>
+          <div style={{ background: 'rgba(255, 133, 0, 0.15)', padding: '10px 14px', borderRadius: '999px', color: '#ffb366', fontWeight: 700 }}>Đơn đang chờ: {orders.length}</div>
         </div>
       </header>
 
@@ -271,9 +314,9 @@ export default function KitchenView({ onLogout }) {
           style={{
             padding: '10px 18px',
             border: 'none',
-            background: activeTab === 'orders' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-            color: activeTab === 'orders' ? '#60a5fa' : textMuted,
-            borderBottom: activeTab === 'orders' ? '2px solid #3b82f6' : 'none',
+            background: activeTab === 'orders' ? 'rgba(255, 133, 0, 0.15)' : 'transparent',
+            color: activeTab === 'orders' ? '#ff8500' : textMuted,
+            borderBottom: activeTab === 'orders' ? '2px solid #ff8500' : 'none',
             cursor: 'pointer',
             fontWeight: 700,
             transition: 'all 0.3s ease'
@@ -286,9 +329,9 @@ export default function KitchenView({ onLogout }) {
           style={{
             padding: '10px 18px',
             border: 'none',
-            background: activeTab === 'inventory' ? 'rgba(59, 130, 246, 0.15)' : 'transparent',
-            color: activeTab === 'inventory' ? '#60a5fa' : textMuted,
-            borderBottom: activeTab === 'inventory' ? '2px solid #3b82f6' : 'none',
+            background: activeTab === 'inventory' ? 'rgba(255, 133, 0, 0.15)' : 'transparent',
+            color: activeTab === 'inventory' ? '#ff8500' : textMuted,
+            borderBottom: activeTab === 'inventory' ? '2px solid #ff8500' : 'none',
             cursor: 'pointer',
             fontWeight: 700,
             transition: 'all 0.3s ease'
@@ -314,7 +357,7 @@ export default function KitchenView({ onLogout }) {
                   <article key={order.id} style={{ ...styles.card, background: cardBg, border: `1px solid ${cardBorder}` }}>
                     <div style={styles.cardHeader}>
                       <div>
-                        <div style={{ fontSize: '0.98rem', color: '#94a3b8' }}>Bàn {order.table?.name || order.tableId}</div>
+                        <div style={{ fontSize: '0.98rem', color: '#94a3b8' }}>{order.table?.name || `Bàn ${order.tableId}`}</div>
                         <div style={{ fontSize: '1.35rem', fontWeight: 700, marginTop: '6px' }}>#{order.id}</div>
                       </div>
                       <div style={styles.tableBadge}>{formatTimeSince(order.createdAt)}</div>

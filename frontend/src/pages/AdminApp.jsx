@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ADMIN_TABLES_API, ADMIN_USERS_API } from '../config/api';
 
 export default function AdminApp() {
   const [tables, setTables] = useState([]);
@@ -16,16 +17,16 @@ export default function AdminApp() {
   }, []);
 
   const fetchData = async () => {
-    const tableRes = await axios.get('http://localhost:3000/api/admin/tables');
+    const tableRes = await axios.get(ADMIN_TABLES_API.GET_ALL_TABLES);
     setTables(tableRes.data);
-    const userRes = await axios.get('http://localhost:3000/api/admin/users');
+    const userRes = await axios.get(ADMIN_USERS_API.GET_ALL_USERS);
     setUsers(userRes.data);
   };
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3000/api/admin/users', { username, password, name, role: 'staff' });
+      await axios.post(ADMIN_USERS_API.CREATE_USER, { username, password, name, role: 'staff' });
       alert('Tạo tài khoản thành công!');
       setUsername('');
       setPassword('');

@@ -111,7 +111,7 @@ app.get('/api/table/:id/menu', async (req, res) => {
 // API Đặt món
 app.post('/api/order', async (req, res) => {
   try {
-    const { tableId, items } = req.body;
+    const { tableId, items, orderType } = req.body;
     const menuItems = await prisma.menuItem.findMany({
       where: { id: { in: items.map(i => i.menuItemId) } }
     });
@@ -124,16 +124,43 @@ app.post('/api/order', async (req, res) => {
     const order = await prisma.order.create({
       data: {
         tableId,
-        status: 'Pending',
+        status: 'pending',
+        orderType: orderType || 'dine-in',
+        paymentStatus: 'unpaid',
         total,
         items: { create: items.map(i => ({ menuItemId: i.menuItemId, quantity: i.quantity })) }
       },
       include: { items: { include: { menuItem: true } }, table: true }
     });
 
-    // Thông báo cho Bếp qua Socket.io
+    console.log('✅ Đơn hàng mới:', order.id, 'từ bàn', order.table?.name);
+    // Thông báo cho Bếp + Admin qua Socket.io
     io.emit('new-order', order);
     res.status(201).json(order);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Cập nhật trạng thái thanh toán
+app.put('/api/orders/:id/payment', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { paymentStatus, paymentMethod } = req.body;
+
+    const order = await prisma.order.update({
+      where: { id: Number(id) },
+      data: {
+        paymentStatus: paymentStatus || 'paid',
+        paymentMethod: paymentMethod || 'cash',
+        status: paymentStatus === 'paid' ? 'completed' : 'pending'
+      },
+      include: { table: true, items: { include: { menuItem: true } } }
+    });
+
+    // Thông báo cập nhật
+    io.emit('order-paid', order);
+    res.json(order);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -142,13 +169,48 @@ app.post('/api/order', async (req, res) => {
 
 // === API CHO ADMIN ===
 
-// Lấy danh sách đơn hàng đang chờ
+// Lấy danh sách đơn hàng đang chờ (chưa thanh toán hoặc chưa phục vụ)
 app.get('/api/admin/orders/pending', async (req, res) => {
   try {
+    // Kitchen display: chỉ hiển thị đơn chưa phục vụ (pending/cooking/ready)
     const orders = await prisma.order.findMany({
-      where: { status: { in: ['Pending', 'Processing'] } },
+      where: { 
+        status: { in: ['pending', 'Pending', 'Processing', 'processing', 'ready', 'Ready', 'cooking', 'Cooking'] }
+      },
       include: { table: true, items: { include: { menuItem: true } } },
       orderBy: { createdAt: 'asc' }
+    });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Lấy đơn chờ thanh toán (dùng cho Cashier)
+app.get('/api/admin/orders/waiting-payment', async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where: { 
+        status: 'waiting_payment'
+      },
+      include: { table: true, items: { include: { menuItem: true } } },
+      orderBy: { createdAt: 'asc' }
+    });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Lấy đơn đã hoàn thành (dùng cho Cashier - hoàn thành)
+app.get('/api/admin/orders/completed', async (req, res) => {
+  try {
+    const orders = await prisma.order.findMany({
+      where: { 
+        status: 'completed'
+      },
+      include: { table: true, items: { include: { menuItem: true } } },
+      orderBy: { createdAt: 'desc' }
     });
     res.json(orders);
   } catch (error) {
@@ -163,8 +225,13 @@ app.patch('/api/admin/order/:id/status', async (req, res) => {
     const { status } = req.body;
     const order = await prisma.order.update({
       where: { id: Number(id) },
-      data: { status }
+      data: { status },
+      include: { items: { include: { menuItem: true } }, table: true }
     });
+    
+    // Broadcast status update to all clients
+    io.emit('order-status-update', order);
+    
     res.json(order);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -413,14 +480,87 @@ app.get('/api/admin/revenue/summary', async (req, res) => {
 
 // 6. Lấy danh sách bàn
 app.get('/api/admin/tables', async (req, res) => {
-  const tables = await prisma.table.findMany();
+  const tables = await prisma.table.findMany({
+    orderBy: { id: 'asc' }
+  });
   res.json(tables);
 });
 
 // === SOCKET.IO ===
 io.on('connection', (socket) => {
   console.log('Client connected:', socket.id);
-  socket.on('disconnect', () => console.log('Client disconnected'));
+
+  // Xử lý đặt hàng từ khách hàng
+  socket.on('place-order', async (data) => {
+    try {
+      const { tableId, items, total } = data;
+
+      // Validate
+      if (!tableId || !items || items.length === 0) {
+        socket.emit('order-error', 'Dữ liệu đơn hàng không hợp lệ');
+        return;
+      }
+
+      // Tạo đơn hàng
+      const order = await prisma.order.create({
+        data: {
+          tableId: Number(tableId),
+          status: 'pending',
+          paymentStatus: 'unpaid',
+          total: Number(total),
+          items: {
+            create: items.map(item => ({
+              menuItemId: Number(item.menuItemId),
+              quantity: Number(item.quantity),
+              note: item.note || ''
+            }))
+          }
+        },
+        include: { table: true, items: { include: { menuItem: true } } }
+      });
+
+      console.log(`✅ Đơn hàng mới từ bàn ${order.table?.name || tableId}: #${order.id}`);
+
+      // Thông báo cho khách hàng rằng đơn đã được gửi
+      socket.emit('order-placed-success', order.id);
+
+      // Broadcast đơn mới cho bếp và admin (Socket.io real-time)
+      io.emit('new-order', order);
+    } catch (error) {
+      console.error('Lỗi tạo đơn:', error);
+      socket.emit('order-error', 'Không thể tạo đơn hàng. Vui lòng thử lại.');
+    }
+  });
+
+  // Gọi nhân viên
+  socket.on('call-staff', async (data) => {
+    try {
+      const { tableId, type } = data;
+
+      // Tạo yêu cầu gọi
+      const callRequest = await prisma.callRequest.create({
+        data: {
+          tableId: Number(tableId),
+          type: type || 'general',
+          status: 'pending'
+        },
+        include: { table: true }
+      });
+
+      console.log(`📞 Khách hàng bàn ${callRequest.table?.name} gọi nhân viên`);
+
+      // Thông báo cho khách hàng
+      socket.emit('call-staff-success');
+
+      // Broadcast cho nhân viên/admin
+      io.emit('staff-called', callRequest);
+    } catch (error) {
+      console.error('Lỗi gọi nhân viên:', error);
+      socket.emit('call-error', 'Không thể gửi yêu cầu. Vui lòng thử lại.');
+    }
+  });
+
+  socket.on('disconnect', () => console.log('Client disconnected:', socket.id));
 });
 
 const PORT = process.env.PORT || 3000;

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { useCartStore } from '../store';
+import { CUSTOMER_API } from '../config/api';
 
 const socket = io('http://localhost:3000');
 
@@ -16,7 +17,7 @@ export default function CustomerApp() {
 
   useEffect(() => {
     // Fetch menu
-    axios.get(`http://localhost:3000/api/table/${tableId}/menu`)
+    axios.get(CUSTOMER_API.GET_TABLE_MENU(tableId))
       .then(res => {
         setCategories(res.data.categories);
         setLoading(false);

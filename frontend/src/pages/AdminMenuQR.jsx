@@ -10,21 +10,23 @@ export default function AdminMenuQR({ onLogout }) {
     display: 'flex',
     gap: '8px',
     marginBottom: '24px',
-    borderBottom: '2px solid #334155',
-    paddingBottom: '0'
+    borderBottom: '2px solid #e85d0420',
+    paddingBottom: '0',
+    fontFamily: '"Times New Roman", Times, serif'
   };
 
   const tabStyle = (isActive) => ({
     padding: '12px 24px',
     background: 'none',
     border: 'none',
-    borderBottom: isActive ? '3px solid #8b5cf6' : '3px solid transparent',
-    color: isActive ? '#fff' : '#94a3b8',
+    borderBottom: isActive ? '3px solid #e85d04' : '3px solid transparent',
+    color: isActive ? '#e85d04' : '#999',
     cursor: 'pointer',
     fontSize: '1rem',
     fontWeight: isActive ? '600' : '500',
     transition: 'all 0.2s',
-    marginBottom: '-2px'
+    marginBottom: '-2px',
+    fontFamily: '"Times New Roman", Times, serif'
   });
 
   return (

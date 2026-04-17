@@ -13,15 +13,15 @@ export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#f5f5f5',
+      background: '#fafaf8',
       color: '#0f0e2e',
-      fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+      fontFamily: '"Times New Roman", Times, serif'
     }}>
       {/* MODERN HEADER */}
       <div style={{
-        background: '#fff',
-        borderBottom: '1px solid #e5e5e5',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        background: 'linear-gradient(90deg, #e85d04 0%, #d64803 100%)',
+        borderBottom: '3px solid #c43202',
+        boxShadow: '0 4px 12px rgba(232, 93, 4, 0.15)',
         position: 'sticky',
         top: 0,
         zIndex: 100,
@@ -45,7 +45,7 @@ export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
             <div style={{
               width: '40px',
               height: '40px',
-              background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+              background: 'linear-gradient(135deg, #e85d04 0%, #d64803 100%)',
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
@@ -61,11 +61,11 @@ export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
                 fontSize: '1.3rem', 
                 fontWeight: 700, 
                 margin: 0,
-                color: '#0f0e2e'
+                color: '#fff'
               }}>
                 {title}
               </h1>
-              <p style={{ fontSize: '0.75rem', color: '#999', margin: '2px 0 0' }}>
+              <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)', margin: '2px 0 0' }}>
                 Quản lý nhà hàng
               </p>
             </div>
@@ -82,9 +82,9 @@ export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
               onClick={handleLogout}
               style={{
                 padding: '8px 16px',
-                background: '#ef4444',
+                background: 'rgba(255,255,255,0.25)',
                 color: '#fff',
-                border: 'none',
+                border: '1px solid rgba(255,255,255,0.4)',
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontSize: '0.9rem',
@@ -94,8 +94,8 @@ export default function AdminLayout({ children, onLogout, title = 'Admin' }) {
                 gap: '6px',
                 transition: 'all 0.2s'
               }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#dc2626'}
-              onMouseLeave={(e) => e.currentTarget.style.background = '#ef4444'}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.35)'; e.currentTarget.style.transform = 'scale(1.05)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.25)'; e.currentTarget.style.transform = 'scale(1)'; }}
             >
               <LogOut size={18} />
               Đăng xuất

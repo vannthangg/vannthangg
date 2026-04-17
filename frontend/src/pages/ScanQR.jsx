@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ADMIN_TABLES_API } from '../config/api';
 
 const styles = {
   container: {
@@ -57,9 +58,9 @@ const styles = {
   },
   tableButtonHover: {
     background: '#fff',
-    borderColor: '#2563eb',
+    borderColor: '#e85d04',
     transform: 'translateY(-4px)',
-    boxShadow: '0 8px 16px rgba(37, 99, 235, 0.15)'
+    boxShadow: '0 8px 16px rgba(232, 93, 4, 0.15)'
   },
   loading: {
     textAlign: 'center',
@@ -77,7 +78,7 @@ const styles = {
   },
   backButton: {
     padding: '14px 32px',
-    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    background: 'linear-gradient(135deg, #e85d04 0%, #d64803 100%)',
     color: '#fff',
     border: 'none',
     borderRadius: '8px',
@@ -86,11 +87,11 @@ const styles = {
     fontWeight: 700,
     marginTop: '24px',
     transition: 'all 0.2s',
-    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.2)'
+    boxShadow: '0 2px 8px rgba(232, 93, 4, 0.2)'
   },
   backButtonHover: {
     transform: 'translateY(-2px)',
-    boxShadow: '0 6px 16px rgba(37, 99, 235, 0.3)'
+    boxShadow: '0 6px 16px rgba(232, 93, 4, 0.3)'
   }
 };
 
@@ -102,7 +103,7 @@ export default function ScanQR() {
   useEffect(() => {
     const fetchTables = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/admin/tables');
+        const res = await axios.get(ADMIN_TABLES_API.GET_ALL_TABLES);
         setTables(res.data || []);
       } catch (err) {
         console.error('Lỗi tải danh sách bàn:', err);

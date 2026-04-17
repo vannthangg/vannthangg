@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { ADMIN_MENU_API } from '../config/api';
 
 export default function MenuManager() {
   const [menuItems, setMenuItems] = useState([]);
@@ -50,8 +51,8 @@ export default function MenuManager() {
   const fetchData = async () => {
     try {
       const [menuRes, catRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/admin/menu'),
-        axios.get('http://localhost:3000/api/admin/categories')
+        axios.get(ADMIN_MENU_API.GET_ALL_MENU),
+        axios.get(ADMIN_MENU_API.GET_CATEGORIES)
       ]);
       setMenuItems(menuRes.data);
       setCategories(catRes.data);
@@ -73,7 +74,7 @@ export default function MenuManager() {
     formData.append('image', file);
 
     try {
-      const res = await axios.post('http://localhost:3000/api/upload', formData, {
+      const res = await axios.post(ADMIN_MENU_API.UPLOAD_IMAGE, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       if (isEdit) setEditForm(prev => ({ ...prev, image: res.data.url }));
@@ -91,7 +92,7 @@ export default function MenuManager() {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3000/api/admin/menu', addForm);
+      await axios.post(ADMIN_MENU_API.ADD_MENU_ITEM, addForm);
       alert('Thêm thành công!');
       setAddForm({ name: '', price: '', categoryId: '', description: '', image: '' });
       fetchData();
@@ -103,7 +104,7 @@ export default function MenuManager() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:3000/api/admin/menu/${editId}`, editForm);
+      await axios.put(ADMIN_MENU_API.UPDATE_MENU_ITEM(editId), editForm);
       alert('Cập nhật thành công!');
       closeEditModal();
       fetchData();
@@ -115,7 +116,7 @@ export default function MenuManager() {
   const handleDelete = async (id) => {
     if (confirm('Xác nhận xóa?')) {
       try {
-        await axios.delete(`http://localhost:3000/api/admin/menu/${id}`);
+        await axios.delete(ADMIN_MENU_API.DELETE_MENU_ITEM(id));
         alert('Xóa thành công!');
         fetchData();
       } catch (err) {

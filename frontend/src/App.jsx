@@ -45,12 +45,12 @@ function App() {
         <Route path="/" element={<Home onLogin={handleLogin} />} />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/scan" element={<ScanQR />} />
+        <Route path="/kitchen" element={<KitchenView onLogout={handleLogout} />} />
 
         <Route element={<ProtectedRoute isAuthenticated={isAuthenticated} />}>
           <Route path="/admin" element={<AdminDashboard onLogout={handleLogout} />} />
           <Route path="/admin/menu" element={<Navigate to="/admin?tab=menuqr" replace />} />
           <Route path="/admin/qr" element={<Navigate to="/admin?tab=menuqr" replace />} />
-          <Route path="/kitchen" element={<KitchenView onLogout={handleLogout} />} />
         </Route>
 
         <Route path="/table/:tableId" element={<TableMenu />} />

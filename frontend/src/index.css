@@ -13,9 +13,9 @@
   --text-main: #f8f9fc;
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
-  --accent: #2563eb;
-  --accent-light: #60a5fa;
-  --accent-secondary: #7c3aed;
+  --accent: #e85d04;
+  --accent-light: #f5a868;
+  --accent-secondary: #e85d04;
   --accent-tertiary: #06b6d4;
   --success: #10b981;
   --success-light: #6ee7b7;
@@ -26,8 +26,8 @@
   --border-light: rgba(148, 163, 184, 0.1);
   --input-bg: #141232;
   --input-color: #fff;
-  --table-header-bg: rgba(37, 99, 235, 0.12);
-  --table-row-alt: rgba(124, 58, 237, 0.08);
+  --table-header-bg: rgba(232, 93, 4, 0.12);
+  --table-row-alt: rgba(232, 93, 4, 0.08);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
@@ -62,9 +62,9 @@
   --text-main: #0f0e2e;
   --text-secondary: #334155;
   --text-muted: #64748b;
-  --accent: #2563eb;
-  --accent-light: #3b82f6;
-  --accent-secondary: #7c3aed;
+  --accent: #e85d04;
+  --accent-light: #f5a868;
+  --accent-secondary: #e85d04;
   --accent-tertiary: #06b6d4;
   --success: #059669;
   --success-light: #34d399;
@@ -75,8 +75,8 @@
   --border-light: rgba(15, 14, 46, 0.08);
   --input-bg: #f8fafc;
   --input-color: #0f0e2e;
-  --table-header-bg: rgba(37, 99, 235, 0.08);
-  --table-row-alt: rgba(124, 58, 237, 0.04);
+  --table-header-bg: rgba(232, 93, 4, 0.08);
+  --table-row-alt: rgba(232, 93, 4, 0.04);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
@@ -189,7 +189,7 @@ button {
 
 /* Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #e85d04 0%, #d64803 100%);
   color: white;
   padding: 11px 26px;
   border-radius: 6px;
@@ -198,7 +198,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+  box-shadow: 0 2px 8px rgba(232, 93, 4, 0.2);
   font-size: 0.95rem;
   border: none;
   cursor: pointer;
@@ -207,7 +207,7 @@ button {
 
 .btn-primary:hover { 
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(232, 93, 4, 0.3);
 }
 
 .btn-primary:active { 
@@ -233,8 +233,8 @@ button {
 .btn-secondary:hover { 
   background-color: #f9f9f9;
   transform: translateY(-1px);
-  border-color: #2563eb;
-  color: #2563eb;
+  border-color: #e85d04;
+  color: #e85d04;
 }
 
 .btn-secondary:active { 
@@ -243,7 +243,7 @@ button {
 
 .btn-tertiary {
   background: transparent;
-  color: #2563eb;
+  color: #e85d04;
   border: none;
   padding: 8px 14px;
   font-weight: 600;
@@ -256,7 +256,7 @@ button {
 }
 
 .btn-tertiary:hover {
-  color: #1e40af;
+  color: #d64803;
 }
 
 .btn-small {
@@ -325,7 +325,7 @@ input, textarea, select {
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: #e85d04;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
 }
 

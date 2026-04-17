@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
+import { ADMIN_MENU_API } from '../config/api';
 
 const socket = io('http://localhost:3000');
 
@@ -21,7 +22,7 @@ export default function DashboardApp() {
     }
 
     // Tải menu để quản lý hiển thị
-    axios.get('http://localhost:3000/api/admin/menu').then(res => setMenuItems(res.data));
+    axios.get(ADMIN_MENU_API.GET_ALL_MENU).then(res => setMenuItems(res.data));
 
     // Lấy các order đang chờ (optional: nếu backend có API lấy order hiện tại)
     // Tạm thời chỉ listen real-time

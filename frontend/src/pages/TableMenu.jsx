@@ -1,17 +1,43 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { CUSTOMER_API } from '../config/api';
 
 const sectionStyles = {
   page: {
     height: '100vh',
     overflow: 'hidden',
-    padding: '28px 16px 28px',
+    padding: '0',
     fontFamily: 'Inter, system-ui, sans-serif',
-    color: '#0f0e2e',
+    color: '#1a1a1a',
     display: 'flex',
     flexDirection: 'column',
-    background: '#f5f5f5'
+    background: '#fafafa'
+  },
+  headerTop: {
+    background: '#e85d04',
+    color: '#fff',
+    padding: '10px 20px',
+    fontSize: '0.85rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottom: '2px solid #d64803'
+  },
+  headerTopContent: {
+    maxWidth: '1600px',
+    margin: '0 auto',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  pageInner: {
+    padding: '24px 20px 24px',
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1,
+    overflow: 'hidden'
   },
   pageContainer: {
     display: 'grid',
@@ -29,124 +55,162 @@ const sectionStyles = {
     gap: '12px',
     overflowY: 'auto',
     paddingRight: '6px',
-    paddingBottom: '24px'
+    paddingBottom: '20px'
   },
   header: {
     animation: 'fadeIn 0.6s ease-out',
-    flexShrink: 0
+    flexShrink: 0,
+    marginBottom: '8px'
   },
   title: {
     margin: 0,
-    fontSize: 'clamp(2rem, 6vw, 2.8rem)',
+    fontSize: '1.6rem',
     lineHeight: 1.05,
     fontWeight: 800,
-    color: '#0f0e2e'
+    color: '#0a0a0a'
   },
   subtitle: {
-    margin: '12px 0 0',
+    margin: '6px 0 0',
     color: '#666',
     maxWidth: '720px',
-    fontSize: '1rem',
-    lineHeight: 1.6,
+    fontSize: '0.95rem',
+    lineHeight: 1.5,
     fontWeight: 500
   },
   badge: {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '999px',
-    padding: '8px 16px',
-    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
-    border: '1px solid rgba(96, 165, 250, 0.3)',
-    color: '#60a5fa',
-    fontWeight: 700,
-    fontSize: '0.85rem',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em'
+    borderRadius: '6px',
+    padding: '6px 12px',
+    background: '#fde4d4',
+    border: '1px solid #fcc5a5',
+    color: '#e85d04',
+    fontWeight: 600,
+    fontSize: '0.75rem',
+    textTransform: 'capitalize',
+    letterSpacing: '0.02em'
   },
   tabs: {
     display: 'flex',
-    gap: '12px',
+    gap: '10px',
     overflowX: 'auto',
-    paddingBottom: '4px',
+    paddingBottom: '12px',
     scrollBehavior: 'smooth',
-    flexShrink: 0
+    flexShrink: 0,
+    marginBottom: '20px'
   },
   tab: {
     flex: '0 0 auto',
-    borderRadius: '999px',
-    border: '1.5px solid rgba(148, 163, 184, 0.15)',
-    background: 'rgba(30, 41, 59, 0.6)',
-    color: '#cbd5e1',
-    padding: '12px 20px',
+    borderRadius: '6px',
+    border: '1px solid #e5e5e5',
+    background: '#f9f9f9',
+    color: '#666',
+    padding: '10px 16px',
     cursor: 'pointer',
-    transition: 'var(--transition)',
+    transition: 'all 0.2s',
     fontWeight: 600,
-    fontSize: '0.95rem',
-    backdropFilter: 'blur(8px)'
+    fontSize: '0.9rem',
+    backdropFilter: 'none'
   },
   tabActive: {
-    background: 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)',
+    background: '#e85d04',
     color: '#fff',
-    borderColor: 'transparent',
-    boxShadow: '0 4px 15px rgba(59, 130, 246, 0.3)'
+    borderColor: '#e85d04',
+    boxShadow: '0 2px 8px rgba(232, 93, 4, 0.2)'
   },
   categoryHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: '16px',
-    marginBottom: '24px',
-    paddingBottom: '16px',
-    borderBottom: '2px solid rgba(148, 163, 184, 0.1)'
+    marginBottom: '20px',
+    paddingBottom: '0',
+    borderBottom: 'none'
   },
   cardList: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-    gap: '16px'
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: '20px',
+    '@media (max-width: 1400px)': {
+      gridTemplateColumns: 'repeat(3, 1fr)'
+    },
+    '@media (max-width: 1000px)': {
+      gridTemplateColumns: 'repeat(2, 1fr)'
+    }
   },
   card: {
     background: '#fff',
-    border: '1px solid #e5e5e5',
-    borderRadius: '12px',
+    border: '1px solid #f0f0f0',
+    borderRadius: '8px',
     overflow: 'hidden',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
     display: 'flex',
     flexDirection: 'column',
-    transition: 'all 0.2s',
-    cursor: 'pointer'
+    transition: 'all 0.3s ease',
+    cursor: 'pointer',
+    position: 'relative'
   },
   cardHover: {
-    transform: 'translateY(-4px)',
-    borderColor: '#2563eb',
-    boxShadow: '0 8px 16px rgba(37, 99, 235, 0.15)'
+    transform: 'translateY(-2px)',
+    borderColor: '#d4d4d8',
+    boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
   },
   image: {
     width: '100%',
-    height: '160px',
+    height: '180px',
     objectFit: 'cover',
     backgroundColor: '#f5f5f5',
-    transition: 'all 0.2s'
+    transition: 'all 0.3s ease',
+    position: 'relative'
+  },
+  cardBadge: {
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    background: '#ef4444',
+    color: '#fff',
+    padding: '6px 10px',
+    borderRadius: '6px',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    zIndex: 10
+  },
+  cardNewBadge: {
+    position: 'absolute',
+    top: '10px',
+    left: '10px',
+    background: '#e85d04',
+    color: '#fff',
+    padding: '6px 10px',
+    borderRadius: '6px',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    zIndex: 10,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '3px'
   },
   cardBody: {
-    padding: '16px',
+    padding: '14px',
     display: 'flex',
     flexDirection: 'column',
     flex: 1
   },
   itemTitle: {
     margin: 0,
-    fontSize: '1rem',
-    fontWeight: 800,
-    color: '#000'
+    fontSize: '0.95rem',
+    fontWeight: 700,
+    color: '#1a1a1a',
+    lineHeight: 1.3
   },
   itemDescription: {
-    margin: '8px 0 0',
-    color: '#333',
-    fontSize: '0.85rem',
-    lineHeight: 1.5,
+    margin: '6px 0 0',
+    color: '#666',
+    fontSize: '0.8rem',
+    lineHeight: 1.4,
     flex: 1,
-    fontWeight: 500
+    fontWeight: 400
   },
   outOfStockOverlay: {
     position: 'absolute',
@@ -177,34 +241,35 @@ const sectionStyles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: '12px',
-    marginTop: '12px'
+    gap: '8px',
+    marginTop: '10px'
   },
   price: {
-    fontSize: '1.1rem',
-    fontWeight: 800,
-    color: '#2563eb'
+    fontSize: '0.95rem',
+    fontWeight: 700,
+    color: '#e85d04'
   },
   addButton: {
     border: 'none',
-    borderRadius: '8px',
-    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    borderRadius: '6px',
+    background: '#e85d04',
     color: '#fff',
-    padding: '8px 12px',
+    padding: '6px 10px',
     fontWeight: 700,
     cursor: 'pointer',
-    minWidth: '40px',
-    minHeight: '40px',
+    width: '32px',
+    height: '32px',
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'var(--transition)',
-    fontSize: '1.1rem',
-    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)'
+    transition: 'all 0.2s',
+    fontSize: '1rem',
+    boxShadow: 'none'
   },
   addButtonHover: {
-    transform: 'scale(1.1)',
-    boxShadow: '0 8px 20px rgba(59, 130, 246, 0.4)'
+    transform: 'scale(1.05)',
+    background: '#d64803',
+    boxShadow: '0 2px 8px rgba(232, 93, 4, 0.2)'
   },
   addButtonDisabled: {
     opacity: 0.45,
@@ -242,26 +307,27 @@ const sectionStyles = {
     letterSpacing: '0.05em'
   },
   footerTotal: {
-    fontSize: '2rem',
-    fontWeight: 800,
-    color: '#2563eb'
+    fontSize: '1.3rem',
+    fontWeight: 700,
+    color: '#e85d04'
   },
   checkoutButton: {
     border: 'none',
-    borderRadius: '8px',
-    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    borderRadius: '6px',
+    background: '#e85d04',
     color: '#fff',
-    padding: '18px 24px',
-    fontWeight: 800,
+    padding: '14px 20px',
+    fontWeight: 700,
     cursor: 'pointer',
     width: '100%',
-    fontSize: '1.05rem',
+    fontSize: '1rem',
     transition: 'all 0.2s',
-    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.2)'
+    boxShadow: 'none'
   },
   checkoutButtonHover: {
-    transform: 'translateY(-2px)',
-    boxShadow: '0 6px 16px rgba(37, 99, 235, 0.3)'
+    transform: 'translateY(-1px)',
+    background: '#d64803',
+    boxShadow: '0 4px 12px rgba(232, 93, 4, 0.25)'
   },
   checkoutButtonDisabled: {
     opacity: 0.5,
@@ -282,18 +348,18 @@ const sectionStyles = {
     maxWidth: '90%',
     fontSize: '0.95rem',
     animation: 'slideInUp 0.3s ease-out',
-    background: '#2563eb',
+    background: '#e85d04',
     color: '#fff'
   },
   searchBox: {
     width: '100%',
-    padding: '14px 18px',
+    padding: '12px 16px',
     background: '#fff',
-    border: '1.5px solid #e5e5e5',
-    borderRadius: '8px',
-    color: '#0f0e2e',
-    fontSize: '1rem',
-    marginBottom: '28px',
+    border: '1px solid #e5e5e5',
+    borderRadius: '6px',
+    color: '#1a1a1a',
+    fontSize: '0.95rem',
+    marginBottom: '20px',
     transition: 'all 0.2s',
     fontWeight: 500
   }
@@ -338,12 +404,13 @@ export default function TableMenu() {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState([0, 1000000]);
+  const [orderType, setOrderType] = useState('dine-in');
 
   useEffect(() => {
     // Hàm fetch âm thầm (không bật loading spinner, không cuộn lên đầu)
     async function refreshMenu() {
       try {
-        const response = await axios.get(`http://localhost:3000/api/table/${tableId}/menu`);
+        const response = await axios.get(CUSTOMER_API.GET_TABLE_MENU(tableId));
         const menuCategories = response.data.categories || [];
         const table = response.data.table;
         if (table && table.name) setTableName(table.name);
@@ -414,13 +481,14 @@ export default function TableMenu() {
 
     const payload = {
       tableId: tableId,
+      orderType: orderType,
       items: cart.map((entry) => ({ menuItemId: entry.menuItem.id, quantity: entry.quantity }))
     };
 
     console.log('Gửi order:', payload);
 
     try {
-      await axios.post('http://localhost:3000/api/order', payload);
+      await axios.post(CUSTOMER_API.PLACE_ORDER, payload);
       setMessage('Đặt món thành công!');
       setCart([]);
     } catch (err) {
@@ -438,38 +506,31 @@ export default function TableMenu() {
     : (categories.find((category) => category.id === activeCategoryId) || categories[0] || {});
 
   return (
-    <main style={{ ...sectionStyles.page, background: pageBg, color: textMain }}>
+    <main style={sectionStyles.page}>
+      {/* HEADER TOP */}
+      <div style={sectionStyles.headerTop}>
+        <div style={sectionStyles.headerTopContent}>
+          <div style={{ display: 'flex', gap: '20px', fontSize: '0.85rem' }}>
+            <span>☎️ 0788606420</span>
+            <span>📧 THTeam@gmail.com</span>
+          </div>
+          <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontWeight: 600 }}>← Quay lại</button>
+        </div>
+      </div>
+
       {loading ? (
         <div style={{ textAlign: 'center', color: '#94a3b8', marginTop: '80px' }}>Đang tải thực đơn...</div>
       ) : (
-        <div style={sectionStyles.pageContainer}>
-          <section style={sectionStyles.mainContent}>
-            <header style={sectionStyles.header}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button
-                  onClick={() => navigate(-1)}
-                  style={{
-                    border: 'none',
-                    background: 'linear-gradient(135deg, #ef4444 0%, #f87171 100%)',
-                    color: '#fff',
-                    padding: '10px 14px',
-                    borderRadius: '12px',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    fontSize: '0.95rem',
-                    transition: 'var(--transition)',
-                    boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
-                  }}
-                  title="Quay lại"
-                  onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.05)', boxShadow: '0 6px 16px rgba(239, 68, 68, 0.4)' })}
-                  onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' })}
-                >
-                  Quay lại
-                </button>
-              </div>
-            </header>
+        <div style={sectionStyles.pageInner}>
+          <div style={sectionStyles.pageContainer}>
+            <section style={sectionStyles.mainContent}>
+              <header style={sectionStyles.header}>
+                <h1 style={sectionStyles.title}>Thực đơn {tableName}</h1>
+                <p style={sectionStyles.subtitle}>Chọn các món ăn yêu thích của bạn</p>
+              </header>
 
-      <section style={sectionStyles.tabs}>
+              {/* Tabs */}
+              <div style={sectionStyles.tabs}>
         {/* Tab Tất cả - luôn ở đầu tiên */}
         <button
           key="all"
@@ -478,7 +539,7 @@ export default function TableMenu() {
           style={{
             ...sectionStyles.tab,
             background: activeCategoryId === 'all'
-              ? 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)'
+              ? 'linear-gradient(135deg, #e85d04 0%, #f5a868 100%)'
               : tabBg,
             color: activeCategoryId === 'all' ? '#fff' : textMuted,
             ...(activeCategoryId === 'all' ? sectionStyles.tabActive : {})
@@ -497,7 +558,7 @@ export default function TableMenu() {
               style={{
                 ...sectionStyles.tab,
                 background: isActive
-                  ? 'linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)'
+                  ? 'linear-gradient(135deg, #e85d04 0%, #f5a868 100%)'
                   : tabBg,
                 color: isActive ? '#fff' : textMuted,
                 ...(isActive ? sectionStyles.tabActive : {})
@@ -507,24 +568,24 @@ export default function TableMenu() {
             </button>
           );
         })}
-      </section>
+              </div>
 
-      {/* Search Bar */}
-      <div style={{ display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
-        <input
-          type="text"
-          placeholder="Tìm kiếm món ăn..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ ...sectionStyles.searchBox, background: searchBg, borderColor: searchBorderColor, color: textMain, maxWidth: '500px' }}
-          onFocus={(e) => Object.assign(e.target.style, { borderColor: 'rgba(59, 130, 246, 0.4)', boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)' })}
-          onBlur={(e) => Object.assign(e.target.style, { borderColor: searchBorderColor, boxShadow: 'none' })}
-        />
-      </div>
+              {/* Search Bar */}
+              <div style={{ display: 'flex', justifyContent: 'center', flexShrink: 0 }}>
+                <input
+                  type="text"
+                  placeholder="Tìm kiếm món ăn..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ ...sectionStyles.searchBox, background: searchBg, borderColor: searchBorderColor, color: textMain, maxWidth: '500px' }}
+                  onFocus={(e) => Object.assign(e.target.style, { borderColor: 'rgba(232, 93, 4, 0.4)', boxShadow: '0 0 0 3px rgba(232, 93, 4, 0.1)' })}
+                  onBlur={(e) => Object.assign(e.target.style, { borderColor: searchBorderColor, boxShadow: 'none' })}
+                />
+              </div>
 
-            {activeCategory ? (
-              <div style={{ display: 'grid', gap: '24px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+              {activeCategory ? (
+                <div style={{ display: 'grid', gap: '24px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                   <div>
                     <h2 style={{ margin: '0 0 8px', color: '#000', fontSize: '1.25rem', fontWeight: 800 }}>{activeCategory.name}</h2>
                     <p style={{ margin: 0, color: '#333', fontWeight: 600 }}>{(activeCategory.items?.length || 0)} món ăn</p>
@@ -564,6 +625,9 @@ export default function TableMenu() {
                                 alt={item.name}
                                 style={{ ...sectionStyles.image, filter: !item.isAvailable ? 'grayscale(100%)' : 'none' }}
                               />
+                              {/* Badge "Mới" hoặc "Giảm giá" */}
+                              {item.isNew && <div style={sectionStyles.cardNewBadge}>✨ MỚI</div>}
+                              {item.discount && <div style={sectionStyles.cardBadge}>-{item.discount}%</div>}
 
                               {/* Badge "Đã hết" */}
                               {!item.isAvailable && (
@@ -575,10 +639,17 @@ export default function TableMenu() {
                               <div style={sectionStyles.cardBody}>
                                 <div>
                                   <h2 style={{ ...sectionStyles.itemTitle, color: textMain }}>{item.name}</h2>
+                                  <div style={sectionStyles.itemRating}>
+                                    <span>⭐⭐⭐⭐⭐</span>
+                                    <span>(128)</span>
+                                  </div>
                                   <p style={{ ...sectionStyles.itemDescription, color: textMuted }}>{item.description || 'Món đặc sắc được chế biến tươi ngon và hấp dẫn.'}</p>
                                 </div>
                                 <div style={sectionStyles.itemFooter}>
-                                  <div style={sectionStyles.price}>{formatCurrency(item.price)}</div>
+                                  <div>
+                                    <div style={sectionStyles.price}>{formatCurrency(item.price)}</div>
+                                    {item.discount && <div style={{ fontSize: '0.8rem', color: '#999', textDecoration: 'line-through' }}>{formatCurrency(item.price * (1 + item.discount / 100))}</div>}
+                                  </div>
                                   <button
                                     type="button"
                                     onClick={() => handleAddToCart(item)}
@@ -588,7 +659,7 @@ export default function TableMenu() {
                                       ...(item.isAvailable ? {} : sectionStyles.addButtonDisabled)
                                     }}
                                     onMouseEnter={(e) => item.isAvailable && Object.assign(e.currentTarget.style, sectionStyles.addButtonHover)}
-                                    onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)' })}
+                                    onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(232, 93, 4, 0.2)' })}
                                   >
                                     +
                                   </button>
@@ -616,7 +687,7 @@ export default function TableMenu() {
             <div style={{ ...sectionStyles.footerCard, background: footerBg, border: `1.5px solid ${cardBorderColor}` }}>
               {/* Tiêu đề Bàn bên phải */}
               <div style={{ paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}`, marginBottom: '8px' }}>
-                <p style={{ margin: 0, color: '#60a5fa', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.75rem' }}>
+                <p style={{ margin: 0, color: '#f5a868', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.75rem' }}>
                   Gọi món nhanh
                 </p>
                 <h1 style={{ ...sectionStyles.title, fontSize: '1.6rem', marginBottom: '4px' }}>{tableName}</h1>
@@ -683,7 +754,7 @@ export default function TableMenu() {
                           onClick={() => handleQuantityChange(entry.menuItem.id, 1)}
                           style={{
                             border: 'none',
-                            background: '#3b82f6',
+                            background: '#e85d04',
                             color: '#fff',
                             width: '36px',
                             height: '36px',
@@ -697,8 +768,8 @@ export default function TableMenu() {
                             transition: 'var(--transition)',
                             padding: 0
                           }}
-                          onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.1)', background: '#2563eb' })}
-                          onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', background: '#3b82f6' })}
+                          onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.1)', background: '#d64803' })}
+                          onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', background: '#e85d04' })}
                         >
                           +
                         </button>
@@ -720,6 +791,44 @@ export default function TableMenu() {
                 </div>
               </div>
 
+              {/* Loại Đơn Hàng */}
+              <div style={{ marginBottom: '12px', display: 'flex', gap: '8px', borderBottom: `1px solid ${cardBorderColor}`, paddingBottom: '12px' }}>
+                <button
+                  onClick={() => setOrderType('dine-in')}
+                  style={{
+                    flex: 1,
+                    padding: '10px 12px',
+                    border: orderType === 'dine-in' ? '2px solid #e85d04' : '1px solid #ddd',
+                    background: orderType === 'dine-in' ? '#e85d0415' : '#fff',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                    color: orderType === 'dine-in' ? '#e85d04' : '#666',
+                    fontSize: '0.85rem',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  🍽️ Ăn tại quán
+                </button>
+                <button
+                  onClick={() => setOrderType('takeaway')}
+                  style={{
+                    flex: 1,
+                    padding: '10px 12px',
+                    border: orderType === 'takeaway' ? '2px solid #e85d04' : '1px solid #ddd',
+                    background: orderType === 'takeaway' ? '#e85d0415' : '#fff',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                    color: orderType === 'takeaway' ? '#e85d04' : '#666',
+                    fontSize: '0.85rem',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  🛍️ Mang về
+                </button>
+              </div>
+
               <button
                 type="button"
                 onClick={handleOrder}
@@ -735,6 +844,7 @@ export default function TableMenu() {
               </button>
             </div>
           </div>
+        </div>
         </div>
       )}
 

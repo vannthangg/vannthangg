@@ -10,10 +10,10 @@ const styles = {
     lineHeight: 1.5
   },
   header: {
-    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    background: 'linear-gradient(135deg, #e85d04 0%, #d64803 100%)',
     color: '#fff',
     padding: '16px 20px',
-    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.15)',
+    boxShadow: '0 4px 12px rgba(232, 93, 4, 0.15)',
     position: 'sticky',
     top: 0,
     zIndex: 50
@@ -52,7 +52,7 @@ const styles = {
     letterSpacing: '0.01em'
   },
   hero: {
-    background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+    background: 'linear-gradient(135deg, #e85d04 0%, #d64803 100%)',
     color: '#fff',
     padding: '48px 20px',
     textAlign: 'center'
@@ -90,7 +90,7 @@ const styles = {
     gap: '8px',
     padding: '14px 32px',
     background: '#fff',
-    color: '#2563eb',
+    color: '#e85d04',
     textDecoration: 'none',
     borderRadius: '8px',
     fontSize: '1.05rem',
@@ -136,13 +136,13 @@ const styles = {
   featureIcon: {
     width: '60px',
     height: '60px',
-    background: '#f0f4ff',
+    background: '#ffe8cc',
     borderRadius: '12px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     margin: '0 auto 16px',
-    color: '#2563eb'
+    color: '#e85d04'
   },
   featureTitle: {
     fontSize: '1.2rem',
@@ -164,7 +164,7 @@ export default function Home({ onLogin }) {
   const handlePrimaryHover = (e, isHover) => {
     if (isHover) {
       e.currentTarget.style.transform = 'translateY(-2px)';
-      e.currentTarget.style.boxShadow = '0 8px 20px rgba(37, 99, 235, 0.3)';
+      e.currentTarget.style.boxShadow = '0 8px 20px rgba(232, 93, 4, 0.3)';
     } else {
       e.currentTarget.style.transform = 'translateY(0)';
       e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
@@ -184,7 +184,7 @@ export default function Home({ onLogin }) {
   const handleFeatureHover = (e, isHover) => {
     if (isHover) {
       e.currentTarget.style.transform = 'translateY(-8px)';
-      e.currentTarget.style.boxShadow = '0 12px 24px rgba(37, 99, 235, 0.15)';
+      e.currentTarget.style.boxShadow = '0 12px 24px rgba(232, 93, 4, 0.15)';
     } else {
       e.currentTarget.style.transform = 'translateY(0)';
       e.currentTarget.style.boxShadow = '0 2px 8px rgba(243, 235, 235, 0.08)';
@@ -193,6 +193,11 @@ export default function Home({ onLogin }) {
 
   return (
     <div style={styles.page}>
+      {/* HEADER TOP */}
+      <div style={{ background: '#e85d04', color: '#fff', padding: '10px 20px', fontSize: '0.85rem', textAlign: 'center' }}>
+        ☎️ 0788606420 | 📧 THTeam@gmail.com
+      </div>
+      
       {/* HEADER */}
       <div style={styles.header}>
         <div style={styles.headerContent}>
@@ -304,9 +309,9 @@ export default function Home({ onLogin }) {
       }}>
         <p style={{ margin: '0 0 16px', fontSize: '0.95rem' }}>© 2026 OrderFood. Tất cả quyền được bảo lưu.</p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' }}>
-          <a href="#" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>Về chúng tôi</a>
-          <a href="#" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>Điều khoản sử dụng</a>
-          <a href="#" style={{ color: '#2563eb', textDecoration: 'none', fontWeight: 600 }}>Liên hệ</a>
+          <a href="#" style={{ color: '#e85d04', textDecoration: 'none', fontWeight: 600 }}>Về chúng tôi</a>
+          <a href="#" style={{ color: '#e85d04', textDecoration: 'none', fontWeight: 600 }}>Điều khoản sử dụng</a>
+          <a href="#" style={{ color: '#e85d04', textDecoration: 'none', fontWeight: 600 }}>Liên hệ</a>
         </div>
       </div>
     </div>
