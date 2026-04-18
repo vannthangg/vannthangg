@@ -17,7 +17,10 @@ const io = new Server(server, {
 
 const prisma = new PrismaClient();
 
-app.use(cors());
+app.use(cors({
+    origin: 'https://fdq7m4t4-5173.asse.devtunnels.ms/',
+    credentials: true // Bật dòng này nếu ứng dụng có dùng cookie/session
+}));
 app.use(express.json());
 
 // === CẤU HÌNH LƯU TRỮ ẢNH (MULTER) ===
@@ -442,7 +445,7 @@ app.get('/api/admin/revenue/daily', async (req, res) => {
     
     const paidOrders = await prisma.order.findMany({
       where: { 
-        status: 'Paid',
+        paymentStatus: 'paid',
         createdAt: { gte: startOfToday }
       }
     });
@@ -465,10 +468,15 @@ app.get('/api/admin/revenue/summary', async (req, res) => {
       nextD.setDate(d.getDate() + 1);
 
       const dayOrders = await prisma.order.findMany({
-        where: { status: 'Paid', createdAt: { gte: d, lt: nextD } }
+        where: { paymentStatus: 'paid', createdAt: { gte: d, lt: nextD } }
       });
+
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+
       summary.push({
-        date: d.toISOString().slice(0, 10),
+        date: `${year}-${month}-${day}`,
         totalRevenue: dayOrders.reduce((sum, o) => sum + o.total, 0)
       });
     }

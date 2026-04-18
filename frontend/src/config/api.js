@@ -1,6 +1,6 @@
 // API Configuration - Tập trung quản lý tất cả endpoints
 
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'https://fdq7m4t4-3000.asse.devtunnels.ms/api';
 
 // ===== AUTH APIs =====
 export const AUTH_API = {
