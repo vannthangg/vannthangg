@@ -28,7 +28,10 @@ export default function AdminDashboard({ onLogout }) {
   const [menuItems, setMenuItems] = useState([]);
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
+<<<<<<< HEAD
   const [inventorySearch, setInventorySearch] = useState('');
+=======
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
 
   useEffect(() => {
     const tabFromUrl = searchParams.get('tab') || 'dashboard';
@@ -300,6 +303,7 @@ export default function AdminDashboard({ onLogout }) {
   const renderInventory = () => (
     <>
       <header style={{ marginBottom: '36px' }}>
+<<<<<<< HEAD
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
           <div>
             <h1 style={{ margin: 0, fontSize: '2.6rem', fontWeight: '900', color: '#e85d04', fontFamily: '"Times New Roman", Times, serif' }}>Quản lý Kho hàng</h1>
@@ -322,6 +326,10 @@ export default function AdminDashboard({ onLogout }) {
             }}
           />
         </div>
+=======
+        <h1 style={{ margin: 0, fontSize: '2.6rem', fontWeight: '900', color: '#e85d04', fontFamily: '"Times New Roman", Times, serif' }}>Quản lý Kho hàng</h1>
+        <p style={{ margin: '10px 0 0', color: '#666', fontSize: '1.05rem', fontFamily: '"Times New Roman", Times, serif' }}>Theo dõi và cập nhật trạng thái hàng hóa trong thực đơn</p>
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
       </header>
 
       {error && (
@@ -336,7 +344,11 @@ export default function AdminDashboard({ onLogout }) {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
+<<<<<<< HEAD
           {menuItems.filter(item => item.name.toLowerCase().includes(inventorySearch.toLowerCase())).map((item) => (
+=======
+          {menuItems.map((item) => (
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
             <div
               key={item.id}
               style={{
@@ -481,7 +493,12 @@ export default function AdminDashboard({ onLogout }) {
       )}
       {activeTab === 'inventory' && renderInventory()}
       {activeTab === 'employee' && (
+<<<<<<< HEAD
         <div style={{ margin: '0 auto' }}>
+=======
+        <div style={{ maxWidth: '500px', margin: '0 auto' }}>
+          <h2 style={{ color: '#e85d04', marginBottom: '20px', fontFamily: '"Times New Roman", Times, serif' }}>Tạo tài khoản Nhân viên</h2>
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
           <EmployeeManager />
         </div>
       )}

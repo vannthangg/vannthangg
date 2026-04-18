@@ -22,8 +22,12 @@ async function main() {
     prisma.table.create({ data: { name: 'Bàn 4', qrCode: '4' } }),
     prisma.table.create({ data: { name: 'Bàn 5', qrCode: '5' } }),
     prisma.table.create({ data: { name: 'Bàn 6', qrCode: '6' } }),
+<<<<<<< HEAD
     prisma.table.create({ data: { name: 'Bàn 7', qrCode: '7' } }),
     prisma.table.create({ data: { name: 'Bàn 8', qrCode: '8' } }),
+=======
+    prisma.table.create({ data: { name: 'Bàn VIP', qrCode: 'vip' } }),
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
   ]);
   console.log(`✓ Đã tạo ${tables.length} bàn.`);
 

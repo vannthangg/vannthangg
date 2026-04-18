@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { useEffect, useState } from 'react';
+=======
+﻿import { useEffect, useState } from 'react';
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
@@ -371,6 +375,7 @@ export default function KitchenView({ onLogout }) {
 
                       <ul style={styles.items}>
                         {order.items.map((item) => (
+<<<<<<< HEAD
                           <li key={item.id} style={{ ...styles.itemRow, background: itemRowBg, flexDirection: 'column', gap: '8px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                               <p style={{ ...styles.itemName, color: textMain, margin: 0 }}>{item.menuItem?.name || 'Món không xác định'}</p>
@@ -381,6 +386,11 @@ export default function KitchenView({ onLogout }) {
                                 <span>⚠️</span> <span>{item.note}</span>
                               </div>
                             )}
+=======
+                          <li key={item.id} style={{ ...styles.itemRow, background: itemRowBg }}>
+                            <p style={{ ...styles.itemName, color: textMain }}>{item.menuItem?.name || 'Món không xác định'}</p>
+                            <p style={styles.itemQty}>x{item.quantity}</p>
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                           </li>
                         ))}
                       </ul>

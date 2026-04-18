@@ -310,6 +310,7 @@ export default function EmployeeManager() {
       </section>
 
       {/* DANH SÁCH NHÂN VIÊN */}
+<<<<<<< HEAD
       <section style={{
         background: '#fff',
         borderRadius: '24px',
@@ -354,10 +355,34 @@ export default function EmployeeManager() {
                   <th style={{ padding: '15px 12px', textAlign: 'left', color: '#e85d04', fontWeight: '700' }}>Vai Trò</th>
                   <th style={{ padding: '15px 12px', textAlign: 'left', color: '#e85d04', fontWeight: '700' }}>Ngày Tạo</th>
                   <th style={{ padding: '15px 12px', textAlign: 'center', color: '#e85d04', fontWeight: '700' }}>Hành Động</th>
+=======
+      <section style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', borderRadius: '24px', padding: '40px', color: '#e2e8f0', border: '2px solid #334155', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+        <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h2 style={{ margin: 0, color: '#fff', fontSize: '1.8rem', fontWeight: '800' }}>Danh Sách ({employees.length})</h2>
+          <button onClick={loadEmployees} style={{ padding: '8px 16px', background: '#e85d04', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: '600' }}>Làm mới</button>
+        </div>
+
+        {loadingList ? (
+          <p style={{ textAlign: 'center', color: '#94a3b8' }}>Đang tải...</p>
+        ) : employees.length === 0 ? (
+          <p style={{ textAlign: 'center', color: '#94a3b8' }}>Chưa có nhân viên</p>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid #334155', backgroundColor: 'rgba(59, 130, 246, 0.1)' }}>
+                  <th style={{ padding: '12px', textAlign: 'left', color: '#e0e7ff', fontWeight: '600' }}>ID</th>
+                  <th style={{ padding: '12px', textAlign: 'left', color: '#e0e7ff', fontWeight: '600' }}>Username</th>
+                  <th style={{ padding: '12px', textAlign: 'left', color: '#e0e7ff', fontWeight: '600' }}>Họ Tên</th>
+                  <th style={{ padding: '12px', textAlign: 'left', color: '#e0e7ff', fontWeight: '600' }}>Vai Trò</th>
+                  <th style={{ padding: '12px', textAlign: 'left', color: '#e0e7ff', fontWeight: '600' }}>Ngày Tạo</th>
+                  <th style={{ padding: '12px', textAlign: 'center', color: '#e0e7ff', fontWeight: '600' }}>Hành Động</th>
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                 </tr>
               </thead>
               <tbody>
                 {employees.map((emp, idx) => (
+<<<<<<< HEAD
                   <tr
                     key={emp.id}
                     style={{
@@ -380,10 +405,22 @@ export default function EmployeeManager() {
                         borderRadius: '6px',
                         fontSize: '0.8rem',
                         fontWeight: '700'
+=======
+                  <tr key={emp.id} style={{ borderBottom: '1px solid #334155', backgroundColor: idx % 2 === 0 ? 'rgba(139, 92, 246, 0.05)' : 'transparent' }}>
+                    <td style={{ padding: '12px', color: '#cbd5e1' }}>#{emp.id}</td>
+                    <td style={{ padding: '12px', color: '#e0e7ff', fontWeight: '500' }}>{emp.username}</td>
+                    <td style={{ padding: '12px', color: '#cbd5e1' }}>{emp.name}</td>
+                    <td style={{ padding: '12px' }}>
+                      <span style={{
+                        background: emp.role === 'Kitchen' ? '#c2410c40' : emp.role === 'admin' ? '#8b5cf640' : '#0369a140',
+                        color: emp.role === 'Kitchen' ? '#ea580c' : emp.role === 'admin' ? '#c4b5fd' : '#06b6d4',
+                        padding: '4px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: '600'
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                       }}>
                         {emp.role === 'Kitchen' ? 'Bếp' : emp.role === 'admin' ? 'Admin' : 'Nhân viên'}
                       </span>
                     </td>
+<<<<<<< HEAD
                     <td style={{ padding: '15px 12px', color: '#666' }}>{formatDate(emp.createdAt)}</td>
                     <td style={{ padding: '15px 12px', textAlign: 'center' }}>
                       <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
@@ -408,6 +445,17 @@ export default function EmployeeManager() {
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = '#fff';
                             e.currentTarget.style.color = '#e85d04';
+=======
+                    <td style={{ padding: '12px', color: '#cbd5e1' }}>{formatDate(emp.createdAt)}</td>
+                    <td style={{ padding: '12px', textAlign: 'center' }}>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                        <button
+                          onClick={() => handleEditOpen(emp)}
+                          style={{
+                            background: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+                            color: '#000', border: 'none', padding: '6px 12px',
+                            borderRadius: '4px', cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem'
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                           }}
                         >
                           Sửa
@@ -416,6 +464,7 @@ export default function EmployeeManager() {
                           onClick={() => handleDelete(emp.id)}
                           disabled={deleteLoading === emp.id}
                           style={{
+<<<<<<< HEAD
                             background: '#fff',
                             color: '#ef4444',
                             border: '2px solid #ef4444',
@@ -439,6 +488,12 @@ export default function EmployeeManager() {
                               e.currentTarget.style.background = '#fff';
                               e.currentTarget.style.color = '#ef4444';
                             }
+=======
+                            background: '#ef4444', color: '#fff', border: 'none',
+                            padding: '6px 12px', borderRadius: '4px',
+                            cursor: deleteLoading === emp.id ? 'not-allowed' : 'pointer',
+                            fontWeight: '600', fontSize: '0.8rem', opacity: deleteLoading === emp.id ? 0.7 : 1
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                           }}
                         >
                           {deleteLoading === emp.id ? 'Đang xóa...' : 'Xóa'}

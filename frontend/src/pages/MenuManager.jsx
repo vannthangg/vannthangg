@@ -16,6 +16,7 @@ export default function MenuManager() {
   const [loading, setLoading] = useState(true);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingEditImage, setUploadingEditImage] = useState(false);
+<<<<<<< HEAD
   const [menuSearch, setMenuSearch] = useState('');
 
   // Synchronized Orange Theme
@@ -34,6 +35,25 @@ export default function MenuManager() {
   const modalBorder = '#e85d04';
   const closeBtnBg = '#f5f5f5';
   const closeBtnColor = '#666';
+=======
+
+  // Light theme only
+  const cardBg = 'linear-gradient(135deg, #ffffff 0%, #f1f5ff 100%)';
+  const cardBorder = '#cbd5e1';
+  const cardShadow = '0 8px 32px rgba(15,23,42,0.1)';
+  const inputBg = '#f8fafc';
+  const inputColor = '#0f172a';
+  const inputBorder = '1px solid #cbd5e1';
+  const textMain = '#0f172a';
+  const textSub = '#334155';
+  const textMuted = '#64748b';
+  const tableHeaderBg = 'rgba(59, 130, 246, 0.07)';
+  const tableRowAlt = 'rgba(139, 92, 246, 0.03)';
+  const modalBackdrop = 'rgba(15,23,42,0.5)';
+  const modalBorder = '#7c3aed';
+  const closeBtnBg = '#e2e8f0';
+  const closeBtnColor = '#334155';
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
 
   useEffect(() => {
     fetchData();
@@ -153,8 +173,12 @@ export default function MenuManager() {
     fontSize: '0.95rem',
     outline: 'none',
     width: '100%',
+<<<<<<< HEAD
     boxSizing: 'border-box',
     fontFamily: '"Times New Roman", Times, serif'
+=======
+    boxSizing: 'border-box'
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
   };
 
   return (
@@ -303,12 +327,20 @@ export default function MenuManager() {
                   disabled={uploadingEditImage}
                   style={{
                     flex: 1, padding: '14px',
+<<<<<<< HEAD
                     background: '#e85d04',
                     color: 'white', border: 'none', borderRadius: '10px',
                     cursor: uploadingEditImage ? 'not-allowed' : 'pointer',
                     fontWeight: '700', fontSize: '1rem',
                     transition: 'opacity 0.2s',
                     fontFamily: '"Times New Roman", Times, serif'
+=======
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+                    color: 'white', border: 'none', borderRadius: '10px',
+                    cursor: uploadingEditImage ? 'not-allowed' : 'pointer',
+                    fontWeight: '700', fontSize: '1rem',
+                    transition: 'opacity 0.2s'
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                   }}
                 >
                   💾 Lưu thay đổi
@@ -409,12 +441,19 @@ export default function MenuManager() {
               disabled={uploadingImage}
               style={{
                 padding: '12px 24px',
+<<<<<<< HEAD
                 background: '#e85d04',
                 color: 'white', border: 'none', borderRadius: '8px',
                 cursor: uploadingImage ? 'not-allowed' : 'pointer',
                 fontWeight: '700',
                 fontFamily: '"Times New Roman", Times, serif',
                 boxShadow: '0 2px 8px rgba(232, 93, 4, 0.2)'
+=======
+                background: '#8b5cf6',
+                color: 'white', border: 'none', borderRadius: '8px',
+                cursor: uploadingImage ? 'not-allowed' : 'pointer',
+                fontWeight: '600'
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
               }}
             >
               Thêm Món
@@ -424,6 +463,7 @@ export default function MenuManager() {
       </section>
 
       {/* ─── Danh sách Món ─── */}
+<<<<<<< HEAD
       <section style={{ background: cardBg, borderRadius: '24px', padding: '40px', color: textSub, border: cardBorder, boxShadow: cardShadow, fontFamily: '"Times New Roman", Times, serif' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <h2 style={{ margin: 0, color: textMain, fontSize: '1.8rem', fontWeight: '800' }}>Danh sách Món ({menuItems.length})</h2>
@@ -444,13 +484,23 @@ export default function MenuManager() {
             }}
           />
         </div>
+=======
+      <section style={{ background: cardBg, borderRadius: '24px', padding: '40px', color: textSub, border: `2px solid ${cardBorder}`, boxShadow: cardShadow }}>
+        <h2 style={{ margin: 0, marginBottom: '24px', color: textMain, fontSize: '1.8rem', fontWeight: '800' }}>Danh sách Món ({menuItems.length})</h2>
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
         {loading ? (
           <p style={{ textAlign: 'center', color: textMuted }}>Đang tải...</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
+<<<<<<< HEAD
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.95rem' }}>
               <thead>
                 <tr style={{ borderBottom: `2px solid #e85d0420`, backgroundColor: tableHeaderBg }}>
+=======
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+              <thead>
+                <tr style={{ borderBottom: `2px solid ${cardBorder}`, backgroundColor: tableHeaderBg }}>
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                   <th style={{ padding: '12px', textAlign: 'left', color: textMain, fontWeight: '600' }}>Tên Món</th>
                   <th style={{ padding: '12px', textAlign: 'left', color: textMain, fontWeight: '600' }}>Danh Mục</th>
                   <th style={{ padding: '12px', textAlign: 'left', color: textMain, fontWeight: '600' }}>Giá</th>
@@ -458,8 +508,13 @@ export default function MenuManager() {
                 </tr>
               </thead>
               <tbody>
+<<<<<<< HEAD
                 {menuItems.filter(item => item.name.toLowerCase().includes(menuSearch.toLowerCase())).map((item, idx) => (
                   <tr key={item.id} style={{ borderBottom: `1px solid #e85d0420`, backgroundColor: idx % 2 === 0 ? tableRowAlt : 'transparent' }}>
+=======
+                {menuItems.map((item, idx) => (
+                  <tr key={item.id} style={{ borderBottom: `1px solid ${cardBorder}`, backgroundColor: idx % 2 === 0 ? tableRowAlt : 'transparent' }}>
+>>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                     <td style={{ padding: '12px', color: textSub }}>
                       <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                         <img src={item.image} alt={item.name} style={{ width: '40px', height: '40px', borderRadius: '6px', objectFit: 'cover', border: `1px solid ${cardBorder}` }} />
