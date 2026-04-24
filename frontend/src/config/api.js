@@ -1,8 +1,10 @@
 // API Configuration - Tập trung quản lý tất cả endpoints
 
+const PRODUCTION_URL = 'https://vannthangg.onrender.com';
+
 const getBaseUrl = () => {
   if (window.location.hostname === 'localhost') return 'http://localhost:3000';
-  return `http://${window.location.hostname}:3000`;
+  return PRODUCTION_URL;
 };
 
 export const SOCKET_URL = getBaseUrl();
