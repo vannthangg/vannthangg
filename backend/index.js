@@ -38,12 +38,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Route mặc định để kiểm tra server
 app.get('/', (req, res) => {
-  res.status(200).send({
-    message: "Server Order Food đang hoạt động ổn định!",
-    status: "success",
-    author: "Van Thang & Team",
-    timestamp: new Date()
-  });
+  res.send('<h1>Server Order Food đang chạy! 🚀</h1>');
 });
 
 // === API AUTH ===
