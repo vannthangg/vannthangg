@@ -36,6 +36,16 @@ const upload = multer({ storage });
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
+// Route mặc định để kiểm tra server
+app.get('/', (req, res) => {
+  res.status(200).send({
+    message: "Server Order Food đang hoạt động ổn định!",
+    status: "success",
+    author: "Van Thang & Team",
+    timestamp: new Date()
+  });
+});
+
 // === API AUTH ===
 // Đăng nhập
 app.post('/api/auth/login', async (req, res) => {
