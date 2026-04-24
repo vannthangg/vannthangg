@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { QRCodeSVG as QRCode } from 'qrcode.react';
-import { ADMIN_ORDERS_API } from '../config/api';
+import { ADMIN_ORDERS_API, SOCKET_URL, API_BASE_URL } from '../config/api';
 
 export default function CashierPage() {
   const [orders, setOrders] = useState([]);
@@ -20,7 +20,7 @@ export default function CashierPage() {
     loadCompletedOrders();
     
     // Connect to Socket.io
-    const socket = io('http://localhost:3000', {
+    const socket = io(SOCKET_URL, {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
@@ -59,7 +59,7 @@ export default function CashierPage() {
 
   const loadOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/admin/orders/waiting-payment');
+      const response = await axios.get(`${API_BASE_URL}/admin/orders/waiting-payment`);
       setOrders(response.data || []);
     } catch (error) {
       console.error('Error loading orders:', error);
@@ -68,7 +68,7 @@ export default function CashierPage() {
 
   const loadCompletedOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/admin/orders/completed');
+      const response = await axios.get(`${API_BASE_URL}/admin/orders/completed`);
       setCompletedOrders(response.data || []);
     } catch (error) {
       console.error('Error loading completed orders:', error);
@@ -84,7 +84,7 @@ export default function CashierPage() {
         paymentStatus: 'paid'
       });
       // Update order status to completed
-      await axios.patch(`http://localhost:3000/api/admin/order/${orderId}/status`, { 
+      await axios.patch(ADMIN_ORDERS_API.UPDATE_ORDER_STATUS(orderId), { 
         status: 'completed' 
       });
       loadCompletedOrders();
@@ -98,21 +98,16 @@ export default function CashierPage() {
   };
 
   const printBill = (order) => {
-<<<<<<< HEAD
     const padId = String(order.id).padStart(6, '0');
     const orderDate = new Date(order.createdAt);
     const day = String(orderDate.getDate()).padStart(2, '0');
     const month = String(orderDate.getMonth() + 1).padStart(2, '0');
     const year = orderDate.getFullYear();
-
-=======
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
     const billContent = `
       <html>
         <head>
           <title>Hóa đơn #${order.id}</title>
           <style>
-<<<<<<< HEAD
             @page { margin: 0; }
             body { 
               font-family: 'Courier New', Courier, monospace; 
@@ -223,144 +218,11 @@ export default function CashierPage() {
 
           <div class="footer">
             Cảm ơn và hẹn gặp lại!
-=======
-            body { 
-              font-family: 'Times New Roman', serif; 
-              max-width: 400px; 
-              margin: 0 auto; 
-              padding: 20px;
-              background: #fff;
-            }
-            .header { 
-              text-align: center; 
-              border-bottom: 2px dashed #e85d04; 
-              padding-bottom: 12px; 
-              margin-bottom: 15px; 
-            }
-            .order-number { 
-              font-size: 20px; 
-              font-weight: bold;
-              color: #e85d04;
-            }
-            .order-time { 
-              font-size: 12px; 
-              color: #666; 
-              margin-top: 5px;
-            }
-            .items { 
-              border-bottom: 1px dashed #ccc; 
-              margin: 15px 0; 
-              padding: 10px 0; 
-            }
-            .item { 
-              display: flex; 
-              justify-content: space-between; 
-              margin: 8px 0; 
-              font-size: 14px; 
-            }
-            .total-section { 
-              margin-top: 15px; 
-              margin-bottom: 20px;
-            }
-            .total { 
-              display: flex; 
-              justify-content: space-between; 
-              font-size: 18px; 
-              font-weight: bold; 
-              border-top: 2px solid #000; 
-              padding-top: 10px; 
-            }
-            .order-type { 
-              text-align: center; 
-              margin: 10px 0; 
-              font-weight: bold; 
-              color: #e85d04;
-              font-size: 14px;
-            }
-            .payment-method {
-              text-align: center;
-              margin: 10px 0;
-              font-size: 12px;
-              color: #666;
-            }
-            .footer { 
-              text-align: center; 
-              margin-top: 20px; 
-              font-size: 12px;
-              padding-top: 15px;
-              border-top: 1px dashed #ccc;
-            }
-            .illustration {
-              text-align: center;
-              margin-top: 20px;
-              padding-top: 15px;
-              border-top: 1px dashed #ccc;
-            }
-            .illustration img {
-              max-width: 100%;
-              height: auto;
-              max-height: 200px;
-              border-radius: 8px;
-            }
-            .thank-you {
-              text-align: center;
-              font-weight: bold;
-              color: #e85d04;
-              margin-top: 15px;
-              font-size: 14px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="order-number">HÓA ĐƠN #${order.id}</div>
-            <div class="order-time">${new Date(order.createdAt).toLocaleString('vi-VN')}</div>
-            <div style="margin-top: 5px; font-size: 14px;">Bàn: <strong>${order.table.name}</strong></div>
-          </div>
-
-          <div class="order-type">
-            ${order.orderType === 'dine-in' ? '🍽️ ĂN TẠI QUÁN' : '🛍️ MANG VỀ'}
-          </div>
-
-          <div class="items">
-            ${order.items.map(item => `
-              <div class="item">
-                <span>${item.menuItem.name} <strong>x${item.quantity}</strong></span>
-                <span><strong>${(item.menuItem.price * item.quantity).toLocaleString('vi-VN')}đ</strong></span>
-              </div>
-            `).join('')}
-          </div>
-
-          <div class="total-section">
-            <div class="total">
-              <span>TỔNG CỘNG:</span>
-              <span>${order.total.toLocaleString('vi-VN')}đ</span>
-            </div>
-          </div>
-
-          <div class="payment-method">
-            <p>Thanh toán: <strong>${order.paymentMethod === 'cash' ? '💵 Tiền mặt' : '📱 Mã QR'}</strong></p>
-          </div>
-
-          <div class="illustration">
-            <img src="/img/payment-illustration.png" alt="Thank you for your order" />
-          </div>
-
-          <div class="thank-you">
-            Cảm ơn quý khách!<br/>
-            Hẹn gặp lại 🙏
-          </div>
-
-          <div class="footer">
-            <p style="margin: 0; font-size: 11px; color: #999;">
-              Phát hành: ${new Date().toLocaleDateString('vi-VN')}
-            </p>
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
           </div>
         </body>
       </html>
     `;
-    
+
     const printWindow = window.open('', '', 'height=700,width=500');
     printWindow.document.write(billContent);
     printWindow.document.close();

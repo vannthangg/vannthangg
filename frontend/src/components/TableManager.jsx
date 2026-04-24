@@ -43,7 +43,7 @@ export default function TableManager() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '25px' }}>
         {tables.map(table => {
           // Đường link tĩnh gắn vào mã QR
-          const qrUrl = `http://localhost:5173/table/${table.id}`;
+          const qrUrl = `${window.location.origin}/table/${table.id}`;
           
           return (
             <div key={table.id} style={{ 

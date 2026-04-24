@@ -104,14 +104,10 @@ export default function ScanQR() {
     const fetchTables = async () => {
       try {
         const res = await axios.get(ADMIN_TABLES_API.GET_ALL_TABLES);
-<<<<<<< HEAD
         const sortedTables = (res.data || []).sort((a, b) => 
           a.name.localeCompare(b.name, undefined, { numeric: true })
         );
         setTables(sortedTables);
-=======
-        setTables(res.data || []);
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
       } catch (err) {
         console.error('Lỗi tải danh sách bàn:', err);
         setTables([]);

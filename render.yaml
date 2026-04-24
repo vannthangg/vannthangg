@@ -1,0 +1,43 @@
+# render.yaml - Cấu hình deploy lên Render.com
+# Dự án Node.js: Backend (Express API) + Frontend (React/Vite static site)
+
+services:
+  # ===== BACKEND API =====
+  - type: web
+    name: order-food-backend
+    runtime: node
+    region: singapore        # Chọn vùng gần Việt Nam nhất
+    plan: free               # Gói miễn phí
+    rootDir: backend         # Thư mục chứa code backend
+    buildCommand: npm install && npx prisma generate && npx prisma db push
+    startCommand: node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        value: file:./prisma/dev.db
+      - key: PORT
+        value: 3000
+    healthCheckPath: /api/admin/tables
+    autoDeploy: true         # Tự động deploy khi push code lên GitHub
+
+  # ===== FRONTEND (Static Site) =====
+  - type: web
+    name: order-food-frontend
+    runtime: static
+    region: singapore
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist  # Vite build output
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html  # SPA routing (React Router)
+    envVars:
+      - key: NODE_VERSION
+        value: 18

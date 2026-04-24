@@ -17,14 +17,7 @@ const io = new Server(server, {
 
 const prisma = new PrismaClient();
 
-<<<<<<< HEAD
-app.use(cors({
-    origin: 'https://fdq7m4t4-5173.asse.devtunnels.ms/',
-    credentials: true // Bật dòng này nếu ứng dụng có dùng cookie/session
-}));
-=======
 app.use(cors());
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
 app.use(express.json());
 
 // === CẤU HÌNH LƯU TRỮ ẢNH (MULTER) ===
@@ -135,11 +128,7 @@ app.post('/api/order', async (req, res) => {
         orderType: orderType || 'dine-in',
         paymentStatus: 'unpaid',
         total,
-<<<<<<< HEAD
         items: { create: items.map(i => ({ menuItemId: i.menuItemId, quantity: i.quantity, note: i.note })) }
-=======
-        items: { create: items.map(i => ({ menuItemId: i.menuItemId, quantity: i.quantity })) }
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
       },
       include: { items: { include: { menuItem: true } }, table: true }
     });
@@ -453,11 +442,7 @@ app.get('/api/admin/revenue/daily', async (req, res) => {
     
     const paidOrders = await prisma.order.findMany({
       where: { 
-<<<<<<< HEAD
         paymentStatus: 'paid',
-=======
-        status: 'Paid',
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
         createdAt: { gte: startOfToday }
       }
     });
@@ -480,7 +465,6 @@ app.get('/api/admin/revenue/summary', async (req, res) => {
       nextD.setDate(d.getDate() + 1);
 
       const dayOrders = await prisma.order.findMany({
-<<<<<<< HEAD
         where: { paymentStatus: 'paid', createdAt: { gte: d, lt: nextD } }
       });
 
@@ -490,12 +474,6 @@ app.get('/api/admin/revenue/summary', async (req, res) => {
 
       summary.push({
         date: `${year}-${month}-${day}`,
-=======
-        where: { status: 'Paid', createdAt: { gte: d, lt: nextD } }
-      });
-      summary.push({
-        date: d.toISOString().slice(0, 10),
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
         totalRevenue: dayOrders.reduce((sum, o) => sum + o.total, 0)
       });
     }
@@ -591,6 +569,6 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`🚀 Backend chạy tại http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Backend chạy tại http://0.0.0.0:${PORT} (truy cập từ mạng LAN được)`);
 });

@@ -1,0 +1,63 @@
+# ============================================
+# Restaurant Ordering System - Dependencies
+# ============================================
+# Dự án sử dụng Node.js (không phải Python).
+# File này liệt kê tất cả thư viện đã dùng.
+# Tương đương "pip freeze" của Python là "npm list" của Node.js.
+# Cài đặt: chạy "npm install" trong thư mục backend/ và frontend/.
+# ============================================
+
+# =====================================
+# BACKEND (Node.js + Express + Prisma)
+# Runtime: Node.js v18+
+# Thư mục: backend/
+# Cài đặt: cd backend && npm install
+# =====================================
+
+express==5.2.1                # Web framework cho Node.js
+@prisma/client==6.19.3        # ORM - Type-safe database client
+prisma==6.19.3                # Database toolkit (migrations, schema, studio)
+socket.io==4.8.3              # Real-time WebSocket communication (server)
+bcrypt==6.0.0                 # Mã hoá (hash) mật khẩu
+multer==2.1.1                 # Upload file (hình ảnh món ăn)
+cors==2.8.6                   # Cross-Origin Resource Sharing middleware
+dotenv==17.4.0                # Đọc biến môi trường từ file .env
+debug==4.4.3                  # Debug utility
+
+# =====================================
+# FRONTEND (React + Vite)
+# Runtime: Node.js v18+
+# Thư mục: frontend/
+# Cài đặt: cd frontend && npm install
+# =====================================
+
+react==18.3.1                 # UI library
+react-dom==18.3.1             # React DOM renderer
+react-router-dom==7.14.0      # Điều hướng trang (routing)
+axios==1.14.0                 # HTTP client (gọi API)
+socket.io-client==4.8.3       # Real-time WebSocket communication (client)
+qrcode.react==4.2.0           # Tạo mã QR Code
+qr-scanner==1.4.2             # Quét mã QR bằng camera
+lucide-react==1.7.0           # Bộ icon
+recharts==3.8.1               # Biểu đồ (charts) cho dashboard
+zustand==5.0.12               # Quản lý state (state management)
+
+# --- Dev Dependencies (Frontend) ---
+vite==5.4.21                  # Build tool & dev server
+@vitejs/plugin-react==4.7.0   # Vite plugin cho React (JSX, HMR)
+vite-plugin-react==4.0.0      # React plugin bổ sung
+
+# =====================================
+# DATABASE
+# =====================================
+# SQLite (file-based, không cần cài thêm)
+# File: backend/prisma/dev.db
+# Schema: backend/prisma/schema.prisma
+
+# =====================================
+# DEPLOY LÊN RENDER
+# =====================================
+# Xem file render.yaml để cấu hình deploy.
+# Backend sử dụng node (node index.js), KHÔNG dùng gunicorn
+# vì đây là dự án Node.js, không phải Python/Flask.
+# Gunicorn là WSGI server cho Python - không áp dụng ở đây.

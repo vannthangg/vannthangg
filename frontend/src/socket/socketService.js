@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { SOCKET_URL } from '../config/api';
 
 class SocketService {
   constructor() {
@@ -8,7 +9,7 @@ class SocketService {
   connect() {
     if (this.socket) return;
     
-    this.socket = io('http://localhost:3000', {
+    this.socket = io(SOCKET_URL, {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,

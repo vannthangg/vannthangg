@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { useCartStore } from '../store';
-import { CUSTOMER_API } from '../config/api';
+import { CUSTOMER_API, SOCKET_URL } from '../config/api';
 
-const socket = io('http://localhost:3000');
+const socket = io(SOCKET_URL);
 
 export default function CustomerApp() {
   const { tableId } = useParams();

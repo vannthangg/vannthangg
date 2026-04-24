@@ -87,8 +87,8 @@ export default function AdminApp() {
                     <td style={{ padding: '12px' }}>#{table.id}</td>
                     <td style={{ padding: '12px', fontWeight: 'bold' }}>{table.name}</td>
                     <td style={{ padding: '12px', color: 'var(--accent)' }}>
-                      <a href={`http://localhost:5173/table/${table.id}`} target="_blank" rel="noreferrer">
-                         http://localhost:5173/table/{table.id}
+                      <a href={`${window.location.origin}/table/${table.id}`} target="_blank" rel="noreferrer">
+                         {window.location.origin}/table/{table.id}
                       </a>
                     </td>
                     <td style={{ padding: '12px', textAlign: 'right' }}>

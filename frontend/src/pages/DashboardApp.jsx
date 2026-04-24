@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
-import { ADMIN_MENU_API } from '../config/api';
+import { ADMIN_MENU_API, SOCKET_URL } from '../config/api';
 
-const socket = io('http://localhost:3000');
+const socket = io(SOCKET_URL);
 
 export default function DashboardApp() {
   const [orders, setOrders] = useState([]);

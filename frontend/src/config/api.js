@@ -1,10 +1,12 @@
 // API Configuration - Tập trung quản lý tất cả endpoints
 
-<<<<<<< HEAD
-const API_BASE_URL = 'https://fdq7m4t4-3000.asse.devtunnels.ms/api';
-=======
-const API_BASE_URL = 'http://localhost:3000/api';
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
+const getBaseUrl = () => {
+  if (window.location.hostname === 'localhost') return 'http://localhost:3000';
+  return `http://${window.location.hostname}:3000`;
+};
+
+export const SOCKET_URL = getBaseUrl();
+export const API_BASE_URL = `${SOCKET_URL}/api`;
 
 // ===== AUTH APIs =====
 export const AUTH_API = {

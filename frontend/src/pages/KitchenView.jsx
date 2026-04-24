@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 import { useEffect, useState } from 'react';
-=======
-﻿import { useEffect, useState } from 'react';
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { io } from 'socket.io-client';
+import { ADMIN_ORDERS_API, ADMIN_MENU_API, SOCKET_URL } from '../config/api';
 
 const styles = {
   page: {
@@ -164,7 +161,7 @@ export default function KitchenView({ onLogout }) {
 
   const loadOrders = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/admin/orders/pending');
+      const response = await axios.get(ADMIN_ORDERS_API.GET_PENDING_ORDERS);
       setOrders(response.data || []);
       setError(null);
     } catch (err) {
@@ -178,7 +175,7 @@ export default function KitchenView({ onLogout }) {
   const loadMenuItems = async () => {
     try {
       setInventoryLoading(true);
-      const response = await axios.get('http://localhost:3000/api/admin/menu');
+      const response = await axios.get(ADMIN_MENU_API.GET_ALL_MENU);
       setMenuItems(response.data || []);
     } catch (err) {
       console.error('Lỗi tải menu:', err);
@@ -192,7 +189,7 @@ export default function KitchenView({ onLogout }) {
     try {
       setActionLoading(itemId);
       const newStatus = !currentStatus;
-      const response = await axios.put(`http://localhost:3000/api/menu/${itemId}/availability`, {
+      const response = await axios.put(ADMIN_MENU_API.UPDATE_AVAILABILITY(itemId), {
         isAvailable: newStatus
       });
 
@@ -215,7 +212,7 @@ export default function KitchenView({ onLogout }) {
     loadOrders();
     
     // Socket.io real-time updates
-    const socket = io('http://localhost:3000', {
+    const socket = io(SOCKET_URL, {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
@@ -268,7 +265,7 @@ export default function KitchenView({ onLogout }) {
   const handleMarkDone = async (orderId) => {
     try {
       setActionLoading(orderId);
-      await axios.patch(`http://localhost:3000/api/admin/order/${orderId}/status`, { status: 'waiting_payment' });
+      await axios.patch(ADMIN_ORDERS_API.UPDATE_ORDER_STATUS(orderId), { status: 'waiting_payment' });
       // Không filter local - để backend & Socket.io xử lý
     } catch (err) {
       console.error(err);
@@ -375,7 +372,6 @@ export default function KitchenView({ onLogout }) {
 
                       <ul style={styles.items}>
                         {order.items.map((item) => (
-<<<<<<< HEAD
                           <li key={item.id} style={{ ...styles.itemRow, background: itemRowBg, flexDirection: 'column', gap: '8px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                               <p style={{ ...styles.itemName, color: textMain, margin: 0 }}>{item.menuItem?.name || 'Món không xác định'}</p>
@@ -386,11 +382,6 @@ export default function KitchenView({ onLogout }) {
                                 <span>⚠️</span> <span>{item.note}</span>
                               </div>
                             )}
-=======
-                          <li key={item.id} style={{ ...styles.itemRow, background: itemRowBg }}>
-                            <p style={{ ...styles.itemName, color: textMain }}>{item.menuItem?.name || 'Món không xác định'}</p>
-                            <p style={styles.itemQty}>x{item.quantity}</p>
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                           </li>
                         ))}
                       </ul>

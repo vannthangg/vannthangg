@@ -457,7 +457,6 @@ export default function TableMenu() {
             : entry
         );
       }
-<<<<<<< HEAD
       return [...prevCart, { menuItem, quantity: 1, note: '' }];
     });
   };
@@ -469,13 +468,6 @@ export default function TableMenu() {
       )
     );
   };
-
-=======
-      return [...prevCart, { menuItem, quantity: 1 }];
-    });
-  };
-
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
   const handleQuantityChange = (menuItemId, delta) => {
     setCart((prevCart) =>
       prevCart
@@ -497,11 +489,7 @@ export default function TableMenu() {
     const payload = {
       tableId: tableId,
       orderType: orderType,
-<<<<<<< HEAD
       items: cart.map((entry) => ({ menuItemId: entry.menuItem.id, quantity: entry.quantity, note: entry.note || '' }))
-=======
-      items: cart.map((entry) => ({ menuItemId: entry.menuItem.id, quantity: entry.quantity }))
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
     };
 
     console.log('Gửi order:', payload);
@@ -655,23 +643,11 @@ export default function TableMenu() {
                                 </div>
                               )}
 
-<<<<<<< HEAD
                                 <div style={sectionStyles.cardBody}>
                                   <div>
                                     <h2 style={{ ...sectionStyles.itemTitle, color: textMain }}>{item.name}</h2>
                                     <p style={{ ...sectionStyles.itemDescription, color: textMuted }}>{item.description || 'Món đặc sắc được chế biến tươi ngon và hấp dẫn.'}</p>
                                   </div>
-=======
-                              <div style={sectionStyles.cardBody}>
-                                <div>
-                                  <h2 style={{ ...sectionStyles.itemTitle, color: textMain }}>{item.name}</h2>
-                                  <div style={sectionStyles.itemRating}>
-                                    <span>⭐⭐⭐⭐⭐</span>
-                                    <span>(128)</span>
-                                  </div>
-                                  <p style={{ ...sectionStyles.itemDescription, color: textMuted }}>{item.description || 'Món đặc sắc được chế biến tươi ngon và hấp dẫn.'}</p>
-                                </div>
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                                 <div style={sectionStyles.itemFooter}>
                                   <div>
                                     <div style={sectionStyles.price}>{formatCurrency(item.price)}</div>
@@ -718,12 +694,6 @@ export default function TableMenu() {
                   Gọi món nhanh
                 </p>
                 <h1 style={{ ...sectionStyles.title, fontSize: '1.6rem', marginBottom: '4px' }}>{tableName}</h1>
-<<<<<<< HEAD
-=======
-                <p style={{ ...sectionStyles.subtitle, fontSize: '0.8rem', color: textMuted, marginTop: '4px' }}>
-                  Thưởng thức tinh hoa ẩm thực được sắp xếp tinh tế. Bấm (+) để thêm món.
-                </p>
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
               </div>
 
               {/* Giỏ hàng chi tiết */}
@@ -733,7 +703,6 @@ export default function TableMenu() {
                     <div
                       key={entry.menuItem.id}
                       style={{
-<<<<<<< HEAD
                         padding: '10px 0',
                         borderBottom: '1px solid rgba(148, 163, 184, 0.1)'
                       }}
@@ -826,78 +795,6 @@ export default function TableMenu() {
                           onFocus={(e) => e.target.style.borderColor = '#e85d04'}
                           onBlur={(e) => e.target.style.borderColor = '#e5e5e5'}
                         />
-=======
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '10px 0',
-                        gap: '12px'
-                      }}
-                    >
-                      <img
-                        src={entry.menuItem.image || placeholderImage}
-                        alt={entry.menuItem.name}
-                        style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px', flexShrink: 0, border: '1px solid rgba(148, 163, 184, 0.2)' }}
-                      />
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ margin: '0 0 4px', fontSize: '1rem', fontWeight: 600, color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {entry.menuItem.name}
-                        </p>
-                        <p style={{ margin: 0, fontSize: '0.95rem', color: '#94a3b8' }}>
-                          {formatCurrency(entry.menuItem.price)}
-                        </p>
-                      </div>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <button
-                          onClick={() => handleQuantityChange(entry.menuItem.id, -1)}
-                          style={{
-                            border: 'none',
-                            background: '#ef4444',
-                            color: '#fff',
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: 700,
-                            fontSize: '1.1rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'var(--transition)',
-                            padding: 0
-                          }}
-                          onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.1)', background: '#dc2626' })}
-                          onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', background: '#ef4444' })}
-                        >
-                          −
-                        </button>
-                        <span style={{ minWidth: '24px', textAlign: 'center', fontWeight: 700, color: '#f8fafc', fontSize: '1rem' }}>
-                          {entry.quantity}
-                        </span>
-                        <button
-                          onClick={() => handleQuantityChange(entry.menuItem.id, 1)}
-                          style={{
-                            border: 'none',
-                            background: '#e85d04',
-                            color: '#fff',
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontWeight: 700,
-                            fontSize: '1.1rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'var(--transition)',
-                            padding: 0
-                          }}
-                          onMouseEnter={(e) => Object.assign(e.target.style, { transform: 'scale(1.1)', background: '#d64803' })}
-                          onMouseLeave={(e) => Object.assign(e.target.style, { transform: 'scale(1)', background: '#e85d04' })}
-                        >
-                          +
-                        </button>
->>>>>>> e798391b17b6b0b464c7b6bd151b1f32e25ee24b
                       </div>
                     </div>
                   ))}
