@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { ShoppingCart, Zap, Clock, Star, Phone, User, X } from 'lucide-react';
-import { PAYMENT_REQUEST_API, RATING_API, STAFF_CALL_API } from '../config/api';
+import { PAYMENT_REQUEST_API, RATING_API, STAFF_CALL_API, CUSTOMER_API } from '../config/api';
 
 const styles = {
   page: {
@@ -307,6 +308,9 @@ const styles = {
 };
 
 export default function Home({ onLogin }) {
+  const { tableId } = useParams();
+  const [tableName, setTableName] = useState('');
+  
   const [showStaffModal, setShowStaffModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -314,6 +318,22 @@ export default function Home({ onLogin }) {
   const [staffMessage, setStaffMessage] = useState('');
   const [paymentNote, setPaymentNote] = useState('');
   const [paymentMethod, setPaymentMethod] = useState(''); // 'cash', 'transfer', 'card'
+
+  useEffect(() => {
+    if (tableId) {
+      const fetchTableInfo = async () => {
+        try {
+          const response = await axios.get(CUSTOMER_API.GET_TABLE_MENU(tableId));
+          if (response.data && response.data.table) {
+            setTableName(response.data.table.name);
+          }
+        } catch (err) {
+          console.error('Error fetching table info:', err);
+        }
+      };
+      fetchTableInfo();
+    }
+  }, [tableId]);
 
   const handlePrimaryHover = (e, isHover) => {
     if (isHover) {
@@ -438,12 +458,16 @@ export default function Home({ onLogin }) {
             <span>OrderFood</span>
           </div>
           <div style={styles.headerLinks}>
-            <Link to="/scan" style={{...styles.headerLink, textDecoration: 'none'}} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
-              🔍 Quét QR
-            </Link>
-            <Link to="/login" style={{...styles.headerLink, textDecoration: 'none'}} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
-              👤 Đăng nhập
-            </Link>
+            {!tableId && (
+              <>
+                <Link to="/scan" style={{...styles.headerLink, textDecoration: 'none'}} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
+                  🔍 Quét QR
+                </Link>
+                <Link to="/login" style={{...styles.headerLink, textDecoration: 'none'}} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>
+                  👤 Đăng nhập
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -452,28 +476,31 @@ export default function Home({ onLogin }) {
       <div style={styles.hero}>
         <div style={styles.heroContent}>
           <h1 style={styles.heroTitle}>
-            Đặt Món Nhanh<br/> Chỉ Với Một Cú Quét!🍔🧁
+            {tableId ? `Xin chào quý khách tại ${tableName || `Bàn ${tableId}`}` : 'Đặt Món Nhanh'}
+            <br/> Chỉ Với Một Cú Quét!🍔🧁
           </h1>
           <p style={styles.heroSubtitle}>
             Hệ thống đặt món thông minh cho nhà hàng. Quét mã QR, chọn món, thanh toán - chỉ trong vài giây!
           </p>
           <div style={styles.heroButtons}>
             <Link 
-              to="/scan"
+              to={tableId ? `/table/${tableId}/menu` : "/scan"}
               style={styles.primaryBtn}
               onMouseEnter={(e) => handlePrimaryHover(e, true)}
               onMouseLeave={(e) => handlePrimaryHover(e, false)}
             >
               <Zap size={20} /> Đặt món ngay
             </Link>
-            <Link 
-              to="/login"
-              style={styles.secondaryBtn}
-              onMouseEnter={(e) => handleSecondaryHover(e, true)}
-              onMouseLeave={(e) => handleSecondaryHover(e, false)}
-            >
-              <Star size={20} /> Quản lý nhà hàng
-            </Link>
+            {!tableId && (
+              <Link 
+                to="/login"
+                style={styles.secondaryBtn}
+                onMouseEnter={(e) => handleSecondaryHover(e, true)}
+                onMouseLeave={(e) => handleSecondaryHover(e, false)}
+              >
+                <Star size={20} /> Quản lý nhà hàng
+              </Link>
+            )}
           </div>
 
           {/* Quick Actions */}
