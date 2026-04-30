@@ -406,6 +406,7 @@ export default function TableMenu() {
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState([0, 1000000]);
   const [orderType, setOrderType] = useState('dine-in');
+  const [isCartExpanded, setIsCartExpanded] = useState(false);
 
   useEffect(() => {
     // Hàm fetch âm thầm (không bật loading spinner, không cuộn lên đầu)
@@ -644,9 +645,9 @@ export default function TableMenu() {
                                 </div>
                               )}
 
-                                <div style={sectionStyles.cardBody}>
+                                <div style={sectionStyles.cardBody} className="responsive-card-body">
                                   <div>
-                                    <h2 style={{ ...sectionStyles.itemTitle, color: textMain }}>{item.name}</h2>
+                                    <h2 style={{ ...sectionStyles.itemTitle, color: textMain }} className="responsive-item-title">{item.name}</h2>
                                     <p style={{ ...sectionStyles.itemDescription, color: textMuted }}>{item.description || 'Món đặc sắc được chế biến tươi ngon và hấp dẫn.'}</p>
                                   </div>
                                 <div style={sectionStyles.itemFooter}>
@@ -687,22 +688,32 @@ export default function TableMenu() {
           </section>
 
           {/* Sidebar giỏ hàng */}
-          <div style={sectionStyles.stickyFooter} className="responsive-sticky-footer">
+          <div style={sectionStyles.stickyFooter} className={`responsive-sticky-footer ${isCartExpanded ? 'expanded' : 'collapsed'}`}>
             <div style={{ ...sectionStyles.footerCard, background: footerBg, border: `1.5px solid ${cardBorderColor}` }} className="responsive-footer-card">
               {/* Tiêu đề Bàn bên phải */}
-              <div style={{ paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}`, marginBottom: '8px' }}>
-                <p style={{ margin: 0, color: '#f5a868', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.75rem' }}>
-                  Gọi món nhanh
-                </p>
-                <h1 style={{ ...sectionStyles.title, fontSize: '1.6rem', marginBottom: '4px' }}>{tableName}</h1>
+              <div style={{ paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}`, marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <p style={{ margin: 0, color: '#f5a868', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.75rem' }}>
+                    Gọi món nhanh
+                  </p>
+                  <h1 style={{ ...sectionStyles.title, fontSize: '1.6rem', marginBottom: '4px' }}>{tableName}</h1>
+                </div>
+                <button 
+                  className="mobile-cart-toggle"
+                  onClick={() => setIsCartExpanded(!isCartExpanded)}
+                >
+                  {isCartExpanded ? 'Thu gọn ▼' : `Giỏ hàng (${cartItemCount}) ▲`}
+                </button>
               </div>
 
+              <div className="collapsible-cart-content">
               {/* Giỏ hàng chi tiết */}
               {cart.length > 0 && (
                 <div style={{ flex: 1, overflowY: 'auto', marginBottom: '12px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}` }}>
                   {cart.map((entry) => (
                     <div
                       key={entry.menuItem.id}
+                      className="responsive-cart-item"
                       style={{
                         padding: '10px 0',
                         borderBottom: '1px solid rgba(148, 163, 184, 0.1)'
@@ -803,7 +814,7 @@ export default function TableMenu() {
               )}
 
               {/* Thông tin tổng cộng */}
-              <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}`, textAlign: 'right' }}>
+              <div className="responsive-total-info" style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '8px', paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}`, textAlign: 'right' }}>
                 <div>
                   <p style={{ ...sectionStyles.footerLabel, fontSize: '0.7rem' }}>Tổng số món</p>
                   <p style={{ ...sectionStyles.footerTotal, fontSize: '1.1rem' }}>{cartItemCount}</p>
@@ -856,15 +867,18 @@ export default function TableMenu() {
                 type="button"
                 onClick={handleOrder}
                 disabled={cart.length === 0}
+                className="responsive-checkout-button"
                 style={{
                   ...sectionStyles.checkoutButton,
-                  ...(cart.length === 0 && sectionStyles.checkoutButtonDisabled)
+                  marginTop: 'auto',
+                  ...(cart.length > 0 ? {} : sectionStyles.checkoutButtonDisabled)
                 }}
                 onMouseEnter={(e) => cart.length > 0 && Object.assign(e.currentTarget.style, sectionStyles.checkoutButtonHover)}
                 onMouseLeave={(e) => Object.assign(e.currentTarget.style, { transform: 'translateY(0)', boxShadow: '0 8px 24px rgba(59, 130, 246, 0.3)' })}
               >
                 Đặt món ngay
               </button>
+              </div>
             </div>
           </div>
         </div>
