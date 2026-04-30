@@ -1,0 +1,53 @@
+/* frontend/src/pages/TableMenu.css */
+
+/* Responsive breakpoints for the customer menu */
+
+@media (max-width: 1200px) {
+  .responsive-card-list {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .responsive-page-container {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  .responsive-card-list {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .responsive-main-content {
+    padding-right: 0 !important;
+    padding-bottom: 220px !important; /* Extra padding to avoid content being hidden under the fixed cart */
+  }
+
+  .responsive-sticky-footer {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: auto !important;
+    max-height: 60vh;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15) !important;
+    background: transparent;
+    pointer-events: none; /* Let clicks pass through the container's background */
+  }
+
+  .responsive-footer-card {
+    border: none !important;
+    border-radius: 20px 20px 0 0 !important;
+    height: auto !important;
+    max-height: 60vh;
+    pointer-events: auto; /* Re-enable clicks for the actual card */
+  }
+}
+
+@media (max-width: 500px) {
+  .responsive-card-list {
+    grid-template-columns: 1fr !important;
+  }
+}

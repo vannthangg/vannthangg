@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { CUSTOMER_API } from '../config/api';
+import './TableMenu.css';
 
 const sectionStyles = {
   page: {
@@ -529,8 +530,8 @@ export default function TableMenu() {
         <div style={{ textAlign: 'center', color: '#94a3b8', marginTop: '80px' }}>Đang tải thực đơn...</div>
       ) : (
         <div style={sectionStyles.pageInner}>
-          <div style={sectionStyles.pageContainer}>
-            <section style={sectionStyles.mainContent}>
+          <div style={sectionStyles.pageContainer} className="responsive-page-container">
+            <section style={sectionStyles.mainContent} className="responsive-main-content">
               <header style={sectionStyles.header}>
                 <h1 style={sectionStyles.title}>Thực đơn {tableName}</h1>
                 <p style={sectionStyles.subtitle}>Chọn các món ăn yêu thích của bạn</p>
@@ -613,7 +614,7 @@ export default function TableMenu() {
                   return (
                     <>
                       {filteredItems.length > 0 ? (
-                        <div style={sectionStyles.cardList}>
+                        <div style={sectionStyles.cardList} className="responsive-card-list">
                           {filteredItems.map((item) => (
                             <article
                               key={item.id}
@@ -686,8 +687,8 @@ export default function TableMenu() {
           </section>
 
           {/* Sidebar giỏ hàng */}
-          <div style={sectionStyles.stickyFooter}>
-            <div style={{ ...sectionStyles.footerCard, background: footerBg, border: `1.5px solid ${cardBorderColor}` }}>
+          <div style={sectionStyles.stickyFooter} className="responsive-sticky-footer">
+            <div style={{ ...sectionStyles.footerCard, background: footerBg, border: `1.5px solid ${cardBorderColor}` }} className="responsive-footer-card">
               {/* Tiêu đề Bàn bên phải */}
               <div style={{ paddingBottom: '12px', borderBottom: `1px solid ${cardBorderColor}`, marginBottom: '8px' }}>
                 <p style={{ margin: 0, color: '#f5a868', textTransform: 'uppercase', letterSpacing: '0.18em', fontSize: '0.75rem' }}>
