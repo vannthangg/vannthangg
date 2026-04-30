@@ -445,27 +445,6 @@ export default function Home({ onLogin }) {
 
   return (
     <div style={styles.page}>
-      <style>
-        {`
-          .responsive-hero-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-          }
-          @media (max-width: 600px) {
-            .responsive-hero-buttons {
-              flex-direction: column;
-              align-items: stretch;
-            }
-            .responsive-hero-buttons > * {
-              width: 100%;
-              justify-content: center;
-              box-sizing: border-box;
-            }
-          }
-        `}
-      </style>
       {/* HEADER TOP */}
       <div style={{ background: '#e85d04', color: '#fff', padding: '10px 20px', fontSize: '0.85rem', textAlign: 'center' }}>
         ☎️ 0788606420 | 📧 THTeam@gmail.com
@@ -497,16 +476,13 @@ export default function Home({ onLogin }) {
       <div style={styles.hero}>
         <div style={styles.heroContent}>
           <h1 style={styles.heroTitle}>
-            {tableId ? (
-              <>Xin chào quý khách tại <br/> {tableName || `Bàn ${tableId}`}! 🍔🧁</>
-            ) : (
-              <>Đặt Món Nhanh<br/> Chỉ Với Một Cú Quét!🍔🧁</>
-            )}
+            {tableId ? `Xin chào quý khách tại ${tableName || `Bàn ${tableId}`}` : 'Đặt Món Nhanh'}
+            <br/> Chỉ Với Một Cú Quét!🍔🧁
           </h1>
           <p style={styles.heroSubtitle}>
             Hệ thống đặt món thông minh cho nhà hàng. Quét mã QR, chọn món, thanh toán - chỉ trong vài giây!
           </p>
-          <div className="responsive-hero-buttons">
+          <div style={styles.heroButtons}>
             <Link 
               to={tableId ? `/table/${tableId}/menu` : "/scan"}
               style={styles.primaryBtn}
@@ -528,7 +504,7 @@ export default function Home({ onLogin }) {
           </div>
 
           {/* Quick Actions */}
-          <div className="responsive-hero-buttons" style={{ marginTop: '24px' }}>
+          <div style={{ ...styles.heroButtons, marginTop: '24px', gap: '16px' }}>
             <button
               onClick={() => setShowStaffModal(true)}
               style={{ ...styles.primaryBtn, background: 'rgba(255,255,255,0.15)', color: '#fff', border: '2px solid #fff' }}
