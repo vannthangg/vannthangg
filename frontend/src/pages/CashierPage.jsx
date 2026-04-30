@@ -354,7 +354,7 @@ export default function CashierPage() {
               fontFamily: '"Times New Roman", Times, serif'
             }}
           >
-            Hoàn Thành ({completedOrders.length})
+            Đã Thanh Toán ({completedOrders.length})
           </button>
         </div>
       </div>
