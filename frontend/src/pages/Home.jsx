@@ -88,37 +88,45 @@ const styles = {
     flexWrap: 'wrap'
   },
   primaryBtn: {
-    display: 'inline-flex',
+    display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '8px',
-    padding: '14px 32px',
+    padding: '16px 32px',
     background: '#fff',
     color: '#e85d04',
     textDecoration: 'none',
-    borderRadius: '8px',
-    fontSize: '1.05rem',
-    fontWeight: 700,
+    borderRadius: '999px',
+    fontSize: '1.1rem',
+    fontWeight: 800,
     border: 'none',
     cursor: 'pointer',
-    transition: 'all 0.3s',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-    letterSpacing: '0.02em'
+    transition: 'all 0.3s ease',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+    letterSpacing: '0.02em',
+    width: '100%',
+    maxWidth: '350px'
   },
   secondaryBtn: {
-    display: 'inline-flex',
+    display: 'flex',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: '8px',
-    padding: '14px 32px',
-    background: 'rgba(255,255,255,0.2)',
+    padding: '16px 32px',
+    background: 'rgba(255,255,255,0.15)',
     color: '#fff',
     textDecoration: 'none',
-    borderRadius: '8px',
-    fontSize: '1.05rem',
+    borderRadius: '999px',
+    fontSize: '1.1rem',
     fontWeight: 700,
-    border: '2px solid #fff',
+    border: '1px solid rgba(255,255,255,0.4)',
+    backdropFilter: 'blur(10px)',
+    WebkitBackdropFilter: 'blur(10px)',
     cursor: 'pointer',
-    transition: 'all 0.3s',
-    letterSpacing: '0.02em'
+    transition: 'all 0.3s ease',
+    letterSpacing: '0.02em',
+    width: '100%',
+    maxWidth: '350px'
   },
   features: {
     maxWidth: '1200px',
@@ -476,13 +484,21 @@ export default function Home({ onLogin }) {
       <div style={styles.hero}>
         <div style={styles.heroContent}>
           <h1 style={styles.heroTitle}>
-            {tableId ? `Xin chào quý khách tại ${tableName || `Bàn ${tableId}`}` : 'Đặt Món Nhanh'}
-            <br/> Chỉ Với Một Cú Quét!🍔🧁
+            {tableId ? (
+              <>
+                Xin chào quý khách tại<br/>
+                <span style={{ color: '#ffea00', fontSize: '1.2em', textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>
+                  {tableName || `Bàn ${tableId}`}
+                </span>
+              </>
+            ) : (
+              <>Đặt Món Nhanh<br/> Chỉ Với Một Cú Quét!🍔🧁</>
+            )}
           </h1>
           <p style={styles.heroSubtitle}>
             Hệ thống đặt món thông minh cho nhà hàng. Quét mã QR, chọn món, thanh toán - chỉ trong vài giây!
           </p>
-          <div style={styles.heroButtons}>
+          <div style={{ ...styles.heroButtons, flexDirection: 'column', alignItems: 'center' }}>
             <Link 
               to={tableId ? `/table/${tableId}/menu` : "/scan"}
               style={styles.primaryBtn}
@@ -504,10 +520,10 @@ export default function Home({ onLogin }) {
           </div>
 
           {/* Quick Actions */}
-          <div style={{ ...styles.heroButtons, marginTop: '24px', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '16px', gap: '16px' }}>
             <button
               onClick={() => setShowStaffModal(true)}
-              style={{ ...styles.primaryBtn, background: 'rgba(255,255,255,0.15)', color: '#fff', border: '2px solid #fff' }}
+              style={styles.secondaryBtn}
               onMouseEnter={(e) => Object.assign(e.currentTarget.style, { background: 'rgba(255,255,255,0.25)', transform: 'translateY(-2px)' })}
               onMouseLeave={(e) => Object.assign(e.currentTarget.style, { background: 'rgba(255,255,255,0.15)', transform: 'translateY(0)' })}
             >
@@ -516,7 +532,7 @@ export default function Home({ onLogin }) {
 
             <button
               onClick={() => setShowRatingModal(true)}
-              style={{ ...styles.primaryBtn, background: 'rgba(255,255,255,0.15)', color: '#fff', border: '2px solid #fff' }}
+              style={styles.secondaryBtn}
               onMouseEnter={(e) => Object.assign(e.currentTarget.style, { background: 'rgba(255,255,255,0.25)', transform: 'translateY(-2px)' })}
               onMouseLeave={(e) => Object.assign(e.currentTarget.style, { background: 'rgba(255,255,255,0.15)', transform: 'translateY(0)' })}
             >
@@ -525,7 +541,7 @@ export default function Home({ onLogin }) {
 
             <button
               onClick={() => setShowPaymentModal(true)}
-              style={{ ...styles.primaryBtn, background: 'rgba(255,255,255,0.15)', color: '#fff', border: '2px solid #fff' }}
+              style={styles.secondaryBtn}
               onMouseEnter={(e) => Object.assign(e.currentTarget.style, { background: 'rgba(255,255,255,0.25)', transform: 'translateY(-2px)' })}
               onMouseLeave={(e) => Object.assign(e.currentTarget.style, { background: 'rgba(255,255,255,0.15)', transform: 'translateY(0)' })}
             >

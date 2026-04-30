@@ -354,12 +354,14 @@ export default function CashierPage() {
               fontFamily: '"Times New Roman", Times, serif'
             }}
           >
-            Hoàn Thành ({completedOrders.length})
+            Đã Thanh Toán ({completedOrders.length})
           </button>
         </div>
       </div>
 
-      <div style={{ background: '#fff', border: '2px solid #ff910015', borderRadius: '12px', padding: '20px', marginBottom: '24px' }}>
+      {activeTab === 'waiting' && (
+        <>
+          <div style={{ background: '#fff', border: '2px solid #ff910015', borderRadius: '12px', padding: '20px', marginBottom: '24px' }}>
         <h2 style={{ color: '#ff9100', margin: '0 0 16px 0', fontSize: '1.3rem' }}>
           Yêu Cầu Gọi Nhân Viên ({staffCalls.length})
         </h2>
@@ -499,7 +501,9 @@ export default function CashierPage() {
             ))
           )}
         </div>
-      </div>
+          </div>
+        </>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
         {/* Danh sách Orders */}
