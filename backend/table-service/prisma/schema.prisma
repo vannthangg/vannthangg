@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./table.db"
+}
+
+model Table {
+  id          Int           @id @default(autoincrement())
+  name        String
+  qrCode      String?
+  calls       CallRequest[]
+  staffCalls  StaffCall[]
+}
+
+model CallRequest {
+  id        Int      @id @default(autoincrement())
+  tableId   Int
+  table     Table    @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  tableName String?
+  type      String   // e.g. 'Mật khẩu Wifi', 'Lấy thêm đá', 'Thanh toán'
+  status    String   @default("pending") // pending, resolved
+  createdAt DateTime @default(now())
+}
+
+model StaffCall {
+  id        Int      @id @default(autoincrement())
+  tableId   Int?
+  table     Table?   @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  tableName String?
+  message   String?
+  status    String   @default("pending") // pending, completed
+  createdAt DateTime @default(now())
+}

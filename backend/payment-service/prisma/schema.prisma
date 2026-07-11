@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./payment.db"
+}
+
+model PaymentRequest {
+  id        Int      @id @default(autoincrement())
+  orderId   Int?
+  tableId   Int?
+  tableName String?
+  method    String   // 'cash', 'transfer', 'card'
+  note      String?
+  status    String   @default("pending") // pending, completed, cancelled
+  createdAt DateTime @default(now())
+}

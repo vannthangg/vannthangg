@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./report.db"
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  tableId   Int?
+  tableName String?
+  stars     Int      // 1-5
+  note      String?
+  status    String   @default("pending") // pending, reviewed
+  createdAt DateTime @default(now())
+}
+
+// In a real CQRS system, we might duplicate Order data here for reporting
+// For simplicity, we just keep ratings for now or track basic stats.
+model DailyStat {
+  id          Int      @id @default(autoincrement())
+  date        DateTime @unique
+  totalOrders Int      @default(0)
+  totalRevenue Float   @default(0)
+}

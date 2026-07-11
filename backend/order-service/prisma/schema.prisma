@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./order.db"
+}
+
+model Order {
+  id              Int         @id @default(autoincrement())
+  tableId         Int
+  tableName       String?
+  status          String      @default("pending") // pending, cooking, ready, completed, paid, cancelled
+  orderType       String      @default("dine-in") // dine-in, takeaway
+  paymentStatus   String      @default("unpaid") // unpaid, paid, cancelled
+  paymentMethod   String?     // cash, qr_code, card
+  total           Float
+  createdBy       Int?        // User ID
+  paidBy          Int?        // User ID
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  orderId    Int
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId Int
+  quantity   Int
+  note       String?
+  isServed   Boolean  @default(false)
+  addedBy    Int?     // User ID
+}
